@@ -1,4 +1,5 @@
 import config from "~/config";
+import {createProcess} from "../Helper";
 import isString from "lodash/isString";
 import Timeout from "../Timeout";
 
@@ -7,8 +8,7 @@ export default function(summons) {
     summons = summons.split(",").map((summon) => summon.trim());
   }
   
-  return function SelectSummon(context) {
-    const manager = context.manager;
+  return createProcess("Support.SelectSummon", ({manager}) => {
     return manager.process([
       function getSummons({worker}) {
         return worker.sendAction("support", summons);
@@ -22,5 +22,5 @@ export default function(summons) {
         return server.makeRequest("click", payload);
       }
     ]);
-  };
+  });
 }

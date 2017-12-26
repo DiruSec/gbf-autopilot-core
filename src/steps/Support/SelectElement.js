@@ -1,6 +1,6 @@
+import {createProcess} from "../Helper";
 import Check from "~/steps/Check";
 import Click from "~/steps/Click";
-import Timeout from "~/steps/Timeout";
 
 const elementPrefix = ".icon-supporter-type-";
 const elementMap = {
@@ -17,16 +17,14 @@ const elementMap = {
 
 export default function(element) {
   const elementSelector = elementPrefix + elementMap[element.toLowerCase()];
-  const changeElementTab = (context, resolve, reject) => {
-    Click(elementSelector)(context).then(resolve, reject);
+  const changeElementTab = (context, done, fail) => {
+    Click(elementSelector)(context).then(done, fail);
   };
 
-  return function SelectElement(context) {
-    return new Promise((resolve, reject) => {
-      const promise = Check(elementSelector + ".selected")(context);
-      promise.then(resolve, () => {
-        changeElementTab(context, resolve, reject);
-      });
+  return createProcess("Support.SelectElement", (context, lastResult, done, fail) => {
+    const promise = Check(elementSelector + ".selected")(context);
+    promise.then(done, () => {
+      changeElementTab(context, done, fail);
     });
-  };
+  });
 }

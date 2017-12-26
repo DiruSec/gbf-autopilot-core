@@ -1,5 +1,8 @@
+import path from "path";
+
 export default {
   popupDelay: 500,
   scrollDelay: 50,
-  redirectDealy: 1500
+  redirectDelay: 1500,
+  rootDir: path.resolve(__dirname, "..")
 };

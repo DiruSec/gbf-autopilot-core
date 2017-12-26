@@ -4,12 +4,13 @@
   "description": "Core module for GBF Autopilot",
   "main": "index.js",
   "scripts": {
-    "install": "gulp"
+    "install": "gulp build"
   },
   "author": "Frizz925 <Frizz925@hotmail.com>",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.1.2",
     "babel-plugin-root-import": "^5.1.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-0": "^6.24.1",
@@ -17,7 +18,10 @@
     "eslint-plugin-import": "^2.8.0",
     "fancy-log": "^1.3.2",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
-    "plugin-error": "^0.1.2"
+    "gulp-babel": "^7.0.0"
+  },
+  "dependencies": {
+    "glua": "^0.4.5",
+    "lodash": "^4.17.4"
   }
 }

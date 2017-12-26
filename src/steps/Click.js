@@ -1,10 +1,11 @@
-export default function (selector, timeout) {
-  return function Click({server, worker}) {
-    return new Promise((resolve, reject) => {
-      server.logger.debug("Clicking element:", selector);
-      worker.sendAction("element", {selector, retry: true}, timeout).then((payload) => {
-        return server.makeRequest("click", payload);
-      }).then(resolve, reject);
-    });
-  };
+import {createProcess} from "./Helper";
+
+export default function(selector, timeout) {
+  return createProcess("Click", ({server, worker}, done, fail) => {
+    server.logger.debug("Clicking element:", selector);
+    const promise = worker.sendAction("element", {selector, retry: true}, timeout);
+    promise.then((payload) => {
+      return server.makeRequest("click", payload);
+    }).then(done, fail);
+  });
 }

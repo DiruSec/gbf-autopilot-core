@@ -1,10 +1,8 @@
+import {createProcess} from "./Helper";
+
 export default function(timeout) {
-  return function Timeout({server}, lastResult) {
-    return new Promise((resolve) => {
-      server.logger.debug("Timeout:", timeout);
-      setTimeout(() => {
-        resolve(lastResult);
-      }, timeout);
-    });
-  };
+  return createProcess("Timeout", ({server}, lastResult, done) => {
+    server.logger.debug("Timeout:", timeout);
+    setTimeout(() => done(lastResult), timeout);
+  });
 }
