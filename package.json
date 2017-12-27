@@ -21,7 +21,7 @@
     "gulp-babel": "^7.0.0"
   },
   "dependencies": {
-    "glua": "^0.4.5",
+    "fengari-interop": "github:fengari-lua/fengari-interop",
     "lodash": "^4.17.4"
   }
 }

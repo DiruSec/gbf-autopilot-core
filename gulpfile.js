@@ -5,8 +5,9 @@ const log = require("fancy-log");
 gulp.task("build", () => {
   return gulp.src("src/**/*.js")
     .pipe(babel())
-    .on("error", (err) => {
+    .on("error", function(err) {
       log.error("babel", err.toString());
+      this.emit("end");
     })
     .pipe(gulp.dest("build"));
 });

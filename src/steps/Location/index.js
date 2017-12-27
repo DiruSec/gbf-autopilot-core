@@ -1,4 +1,4 @@
-import {createProcess} from "./Helper";
+import {createProcess} from "../Helper";
 import Change from "./Change";
 
 function Location() {

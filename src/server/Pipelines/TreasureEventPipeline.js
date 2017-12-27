@@ -5,7 +5,7 @@ import Stop from "~/steps/Stop";
 import Loop from "~/steps/Loop";
 import Wait from "~/steps/Wait";
 import Timeout from "~/steps/Timeout";
-import LocationChange from "~/steps/LocationChange";
+import Location from "~/steps/Location";
 
 import Support from "~/steps/Support";
 import Battle from "~/steps/Battle";
