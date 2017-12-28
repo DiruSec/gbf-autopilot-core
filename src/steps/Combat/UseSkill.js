@@ -1,7 +1,7 @@
 import config from "~/config";
-import Key from "~/steps/Key";
-import Timeout from "~/steps/Timeout";
 import {createProcess} from "../Helper";
+import Timeout from "~/steps/Timeout";
+import * as Key from "~/steps/Key";
 
 const skillMap = {
   1: "q",

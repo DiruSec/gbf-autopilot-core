@@ -6,7 +6,9 @@ import forEach from "lodash/forEach";
 
 import config from "~/config";
 import {createProcess} from "~/steps/Helper";
-import UseSkill from "~/steps/Combat/UseSkill";
+import Timeout from "~/steps/Timeout";
+import * as Battle from "~/steps/Battle";
+import * as Combat from "~/steps/Combat";
 
 const runnerScriptPath = config.rootDir + "/scripts/Runner.lua";
 
@@ -47,8 +49,6 @@ const setGlobalVars = (L, globalVars) => {
 export default function(scriptPath) {
   return createProcess("Battle.Script", (context, state, done, fail) => {
     const executeCode = createCodeRunner(context);
-    const executeScript = createScriptRunner(context, executeCode);
-
     const server = context.server;
 
     const L = lauxlib.luaL_newstate();
@@ -56,22 +56,20 @@ export default function(scriptPath) {
     jslib.luaopen_js(L);
 
     setGlobalVars(L, {
-      context, state,
+      context, state, 
 
       logger: server.logger,
+      script_path: scriptPath,
       script_done: done,
       script_fail: fail,
       error_handler: ::server.defaultErrorHandler,
 
       steps: {
-        Combat: {
-          UseSkill
-        }
+        Battle, Combat, Timeout
       },
     });
 
-    const scriptCode = readScript(scriptPath);
-    executeCode(L, "function main()\n" + scriptCode + "\nend");
-    executeScript(L, runnerScriptPath);
+    const escapedRunnerScriptPath = runnerScriptPath.replace(/\\/g, "\\\\");
+    executeCode(L, `dofile('${escapedRunnerScriptPath}')`);
   });
 }

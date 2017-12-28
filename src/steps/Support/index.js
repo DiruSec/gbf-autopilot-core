@@ -1,11 +1,5 @@
-import SelectElement from "./SelectElement";
-import SelectSummon from "./SelectSummon";
-import SelectPartyGroup from "./SelectPartyGroup";
-import SelectPartyDeck from "./SelectPartyDeck";
-import StartBattle from "./StartBattle";
-
-export default {
-  SelectElement, SelectSummon,
-  SelectPartyGroup, SelectPartyDeck,
-  StartBattle
-};
+export SelectElement from "./SelectElement";
+export SelectSummon from "./SelectSummon";
+export SelectPartyGroup from "./SelectPartyGroup";
+export SelectPartyDeck from "./SelectPartyDeck";
+export StartBattle from "./StartBattle";

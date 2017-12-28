@@ -8,7 +8,7 @@ import Timeout from "~/steps/Timeout";
 import Location from "~/steps/Location";
 
 import Support from "~/steps/Support";
-import Battle from "~/steps/Battle";
+import * as Battle from "~/steps/Battle";
 
 export default function(server) {
   const config = server.config;

@@ -1,14 +1,8 @@
 import {createProcess} from "../Helper";
-import Change from "./Change";
+export Change from "./Change";
 
-function Location() {
+export default function Location() {
   return createProcess("Location", ({worker}) => {
     return worker.sendAction("location");
   });
 }
-
-Location.prototype = {
-  Change
-};
-
-export default Location;
