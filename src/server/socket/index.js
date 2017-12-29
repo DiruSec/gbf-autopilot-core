@@ -5,8 +5,7 @@ export const observerFactories = {
   "broadcast": onBroadcast
 };
 
-export default function() {
-  forEach(observerFactories, (factory) => {
-    factory.call(this);
-  });
+export default function socket() {
+  forEach(observerFactories, (factory) => factory.call(this));
+  return {};
 }

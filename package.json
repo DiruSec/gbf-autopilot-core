@@ -2,7 +2,7 @@
   "name": "gbf-autopilot-core",
   "version": "0.0.1",
   "description": "Core module for GBF Autopilot",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "install": "gulp build"
   },

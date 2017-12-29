@@ -1,10 +1,5 @@
-import Worker from "./worker";
-import Socket from "./socket";
+import server from "./server";
 
-const pluginApi = {};
-const submodules = [Worker, Socket];
-
-export default function() {
-  submodules.forEach((submodule) => submodule.call(this));
-  return pluginApi;
-}
+module.exports = {
+  server
+};
