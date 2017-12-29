@@ -1,3 +1,1 @@
-module.exports = {
-  "server": require("./build/server").default
-};
+module.exports = require("./build/index").default;

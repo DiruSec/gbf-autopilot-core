@@ -10,6 +10,8 @@ import Location from "~/steps/Location";
 import Support from "~/steps/Support";
 import * as Battle from "~/steps/Battle";
 
+const bindContextToSteps = (context, steps) => steps.map(step => step.bind(context));
+
 export default function(server) {
   const config = server.config;
   const rootDir = server.rootDir;
@@ -37,9 +39,11 @@ export default function(server) {
     Loop()
   ];
   */
-  return [
+  const boundSteps = bindContextToSteps(this, [
     Battle.State(),
     Battle.Script(fullScriptPath),
     Stop()
-  ];
+  ]);
+
+  return boundSteps;
 }

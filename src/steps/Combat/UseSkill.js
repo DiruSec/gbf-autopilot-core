@@ -1,5 +1,6 @@
 import config from "~/config";
 import {createProcess} from "../Helper";
+import WaitForAjax from "~/steps/WaitForAjax";
 import Timeout from "~/steps/Timeout";
 import * as Key from "~/steps/Key";
 
@@ -15,7 +16,9 @@ export default function(num, skill) {
     return manager.process([
       Key.Press(num),
       Timeout(config.keyDelay),
-      Key.Press(skillMap[skill])
+      Key.Press(skillMap[skill]),
+      WaitForAjax(/\/rest\/raid\/.+_result\.json/),
+      Timeout(config.keyDelay)
     ]);
   });
 }
