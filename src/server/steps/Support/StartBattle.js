@@ -1,10 +1,10 @@
 import config from "~/config";
 import {createProcess} from "../Helper";
-import Wait from "~/steps/Wait";
-import Check from "~/steps/Check";
-import Click from "~/steps/Click";
-import Timeout from "~/steps/Timeout";
-import Location from "~/steps/Location";
+import Wait from "../Wait";
+import Check from "../Check";
+import Click from "../Click";
+import Timeout from "../Timeout";
+import Location from "../Location";
 
 const CheckLocation = createProcess("Support.StartBattle.CheckLocation", (context, location, done, fail) => {
   const manager = context.manager;

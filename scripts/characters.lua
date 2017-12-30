@@ -59,7 +59,7 @@ function create_character(idx, chara)
   
     UseSkill = function (self, skillIdx)
       local result = run_processes({
-        steps.Combat:UseSkill(idx, skillIdx)
+        steps.Combat:UseSkill(idx, skillIdx, _state)
       })
       if result then 
         refresh_state(nil)

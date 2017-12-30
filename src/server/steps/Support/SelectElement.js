@@ -1,6 +1,6 @@
 import {createProcess} from "../Helper";
-import Check from "~/steps/Check";
-import Click from "~/steps/Click";
+import Check from "../Check";
+import Click from "../Click";
 
 const elementPrefix = ".icon-supporter-type-";
 const elementMap = {
@@ -17,14 +17,9 @@ const elementMap = {
 
 export default function(element) {
   const elementSelector = elementPrefix + elementMap[element.toLowerCase()];
-  const changeElementTab = (context, done, fail) => {
-    Click(elementSelector)(context).then(done, fail);
-  };
-
-  return createProcess("Support.SelectElement", (context, lastResult, done, fail) => {
-    const promise = Check(elementSelector + ".selected")(context);
-    promise.then(done, () => {
-      changeElementTab(context, done, fail);
-    });
+  return createProcess("Support.SelectElement", function(_, $, done, fail) {
+    Check(elementSelector + ".selected").call(this, _).then(done, () => {
+      return Click(elementSelector).call(this, _);
+    }).then(done, fail);
   });
 }

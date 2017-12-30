@@ -4,7 +4,7 @@ import assign from "lodash/assign";
 import forEach from "lodash/forEach";
 import values from "lodash/values";
 
-export default function() {
+export default function State() {
   return createProcess("Battle.State", function(context, _, done, fail) {
     const worker = context.worker;
     const result = {};

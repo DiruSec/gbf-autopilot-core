@@ -9,7 +9,7 @@ import Timeout from "../Timeout";
 import WaitForResult from "./WaitForResult";
 import keyMap from "./keyMap";
 
-export default function(idx) {
+export default function(idx, state) {
   return createProcess("Combat.Summon", function(context, _, done, fail) {
     const manager = context.manager;
     const doSummon = () => {
@@ -24,9 +24,10 @@ export default function(idx) {
       ]).then(noop, fail);
     };
 
-    Battle.State()(context).then((state) => {
+    if (state) {
       state.summons[idx-1].available ? doSummon() : done(false);
-    }, fail);
-
+    } else {
+      doSummon();
+    }
   });
 }

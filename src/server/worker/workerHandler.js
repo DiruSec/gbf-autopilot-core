@@ -1,11 +1,16 @@
-import TreasureEventBattlePipeline from "~/server/pipelines/TreasureEvent/Battle";
+import TreasureEventPipeline from "~/server/pipelines/TreasureEvent";
+import DefaultPipeline from "~/server/pipelines/Default";
 
-const pipelines = [TreasureEventBattlePipeline];
+const pipelines = [
+  TreasureEventPipeline,
+  DefaultPipeline
+];
 
 export default function() {
   this.on("worker.beforeStart", ({manager}) => {
+    const context = {};
     pipelines.forEach((pipeline) => {
-      pipeline = pipeline.call(this);
+      pipeline = pipeline.call(this, context);
       if (!pipeline) return;
       manager.setPipeline(pipeline);
       return false;

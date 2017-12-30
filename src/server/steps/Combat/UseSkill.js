@@ -4,27 +4,26 @@ import config from "~/config";
 import {createProcess} from "../Helper";
 import WaitForResult from "./WaitForResult";
 import * as Key from "../Key";
-import * as Battle from "../Battle";
 import Timeout from "../Timeout";
 import keyMap from "./keyMap";
 
-export default function(num, skill) {
-  return createProcess("Combat.UseSkill", (context, _, done, fail) => {
-    const manager = context.manager;
+export default function(num, skill, state) {
+  return createProcess("Combat.UseSkill", (_, $, done, fail) => {
     const doSkill = () => {
-      manager.process([
+      _.manager.process([
         WaitForResult()
-      ]).then(done, fail);
+      ]).then(() => done(true), fail);
 
-      manager.process([
+      _.manager.process([
         Key.Press(num), Timeout(config.keyDelay),
         Key.Press(keyMap[skill])
       ]).then(noop, fail);
     };
 
-    Battle.State()(context).then((state) => {
-      state.party[num-1].skills[skill-1].available ?
-        doSkill() : done(false);
-    }, fail);
+    if (state) {
+      state.party[num-1].skills[skill-1].available ? doSkill() : done(false);
+    } else {
+      doSkill();
+    }
   });
 }

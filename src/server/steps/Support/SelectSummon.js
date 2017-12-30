@@ -8,7 +8,8 @@ export default function(summons) {
     summons = summons.split(",").map((summon) => summon.trim());
   }
   
-  return createProcess("Support.SelectSummon", ({manager}) => {
+  return createProcess("Support.SelectSummon", function({manager}) {
+    this.logger.debug("Preferred summons:", summons);
     return manager.process([
       function getSummons({worker}) {
         return worker.sendAction("support", summons);

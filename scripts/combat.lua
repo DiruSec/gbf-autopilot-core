@@ -1,6 +1,6 @@
 function Summon(idx)
   local result = run_processes({
-    steps.Combat:Summon(idx),
+    steps.Combat:Summon(idx, _state),
     steps.Timeout(1500)
   })
   if result ~= false then 

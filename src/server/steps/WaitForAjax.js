@@ -1,19 +1,15 @@
 import {createProcess} from "./Helper";
 
-const ajaxFinishEvent = "socket.broadcast.ajaxFinish";
-
-export default function(regexp, timeout) {
+export default function(regexp) {
   return createProcess("WaitForAjax", function(context, lastResult, done, fail) {
-    timeout = timeout || this.config.Server.WaitAjaxTimeoutInMs;
-    const timeoutInstance = setTimeout(() => {
-      fail(new Error("Ajax timeout"));
-    }, timeout);
-    const subscription = this.server.getObservable(ajaxFinishEvent)
+    const subscription = this.server.getObservable("socket.broadcast")
+      .filter(({name}) => name == "ajaxFinish")
       .filter(({payload}) => payload.url.match(regexp))
       .subscribe(() => {
-        clearTimeout(timeoutInstance);
         subscription.unsubscribe();
         done();
       }, fail);
+  }, {
+    doNotTimeout: true
   });
 }
