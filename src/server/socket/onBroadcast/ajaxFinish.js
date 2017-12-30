@@ -1,3 +1,3 @@
-export default function ajaxFinish({payload}) {
-  this.logger.debug(payload.url);
+export default function ajaxFinish(payload) {
+  this.emit("socket.broadcast.ajaxFinish", payload);
 }

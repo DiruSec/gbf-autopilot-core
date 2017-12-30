@@ -10,10 +10,7 @@ export default function TreasureEventBattlePipeline() {
   const scriptPath = config.TreasureEventMode.TreasureEventModeScript;
   const fullScriptPath = path.resolve(rootDir, scriptPath);
   return [
-    Battle.State(),
-    Battle.Script(fullScriptPath),
+    Battle.Loop(fullScriptPath),
     Stop()
   ];
 }
-
-TreasureEventBattlePipeline.test = ({config}) => config.TreasureEventMode.Enabled;

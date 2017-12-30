@@ -1,41 +1,31 @@
-import {lauxlib, lualib} from "fengari";
+import path from "path";
+import {lua, lauxlib, lualib} from "fengari";
 import jslib from "fengari-interop";
+import assign from "lodash/assign";
 
 import config from "~/config";
-import {createProcess} from "~/steps/Helper";
-import Timeout from "~/steps/Timeout";
-import * as Battle from "~/steps/Battle";
-import * as Combat from "~/steps/Combat";
+import {createProcess} from "../../Helper";
 
 import createCodeRunner from "./createCodeRunner";
+import createGlobalVars from "./createGlobalVars";
 import setGlobalVars from "./setGlobalVars";
-
-const runnerScriptPath = config.rootDir + "/scripts/Runner.lua";
 
 export default function(scriptPath) {
   return createProcess("Battle.Script", (context, state, done, fail) => {
-    const executeCode = createCodeRunner(context);
-    const server = context.server;
-
     const L = lauxlib.luaL_newstate();
+    const executeCode = createCodeRunner(L, context);
     lualib.luaL_openlibs(L);
-    jslib.luaopen_js(L);
+    lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
 
-    setGlobalVars(L, {
-      context, state,
-
-      logger: server.logger,
-      script_path: scriptPath,
-      script_done: done,
-      script_fail: fail,
-      error_handler: ::server.defaultErrorHandler,
-
-      steps: {
-        Battle, Combat, Timeout
-      },
+    const globalVars = createGlobalVars.call(this, context, state, {
+      scriptPath,
+      done, fail
     });
+    setGlobalVars(L, globalVars);
 
-    const escapedRunnerScriptPath = runnerScriptPath.replace(/\\/g, "\\\\");
-    executeCode(L, `dofile('${escapedRunnerScriptPath}')`);
+    config.scripts.forEach((script) => {
+      const escapedScriptPath = path.resolve(config.scriptDir, script).replace(/\\/g, "\\\\");
+      executeCode(`dofile('${escapedScriptPath}')`);
+    });
   });
 }
