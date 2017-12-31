@@ -10,9 +10,9 @@ export default function(deck) {
   const partyDeckSelector = getPartyDeckSelector(deck);
   return createProcess("Support.SelectPartyDeck", function(context, lastResult, done, fail) {
     this.logger.debug("Using party deck:", deck);
-    const promise = Check(partyDeckSelector + ".flex-active")(context);
+    const promise = Check(partyDeckSelector + ".flex-active").call(this, context);
     promise.then(done, () => {
-      Click(partyDeckSelector)(context).then(done, fail);
+      Click(partyDeckSelector).call(this, context).then(done, fail);
     });
   });
 }
