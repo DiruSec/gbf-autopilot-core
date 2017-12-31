@@ -18,7 +18,8 @@
     "eslint-plugin-import": "^2.8.0",
     "fancy-log": "^1.3.2",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0"
+    "gulp-babel": "^7.0.0",
+    "gulp-sourcemaps": "^2.6.2"
   },
   "dependencies": {
     "fengari-interop": "github:fengari-lua/fengari-interop",

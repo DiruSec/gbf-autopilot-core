@@ -22,10 +22,12 @@ function update_character(idx, chara, character)
   character.charge_gauge = chara.ougi
   character.is_alive = chara.alive
 
-  for i, skill in pairs(chara.skills) do
-    local idx = i + 1
-    local key = string.format('skill_%d_available', idx)
-    character[key] = skill.available
+  if chara.skills then
+    for i, skill in pairs(chara.skills) do
+      local idx = i + 1
+      local key = string.format('skill_%d_available', idx)
+      character[key] = skill.available
+    end
   end
 
   characters[character.name] = character
@@ -39,6 +41,7 @@ function update_character(idx, chara, character)
 end
 
 function create_character(idx, chara)
+  local skill_target = nil
   local character = {
     HasStatusEffect = function (self, id)
       for _, effectId in pairs(chara.buffs) do
@@ -57,18 +60,20 @@ function create_character(idx, chara)
       return self
     end,
   
-    UseSkill = function (self, skillIdx)
+    UseSkill = function (self, skill_idx)
       local result = run_processes({
-        steps.Combat:UseSkill(idx, skillIdx, _state)
+        steps.Combat:UseSkill(idx, skill_idx, skill_target, _state)
       })
       if result then 
+        skill_target = nil
         refresh_state(nil)
       end
       return self
     end,
 
     OnPartyMember = function (self, member)
-      -- To be implemented
+      skill_target = member
+      return self
     end
   }
 

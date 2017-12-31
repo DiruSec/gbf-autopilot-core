@@ -11,16 +11,16 @@ export default function(summons) {
   return createProcess("Support.SelectSummon", function({manager}) {
     this.logger.debug("Preferred summons:", summons);
     return manager.process([
-      function getSummons({worker}) {
-        return worker.sendAction("support", summons);
+      function getSummons() {
+        return this.sendAction("support", summons);
       },
-      function debugSummons({server}, payload) {
-        server.logger.debug("Selected summon:", payload.summon);
+      function debugSummons(_, payload) {
+        this.logger.debug("Selected summon:", payload.summon);
         return payload;
       },
       Timeout(config.scrollDelay),
-      function clickSummon({server}, payload) {
-        return server.makeRequest("click", payload);
+      function clickSummon(_, payload) {
+        return this.server.makeRequest("click", payload);
       }
     ]);
   });

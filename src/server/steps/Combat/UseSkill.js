@@ -2,21 +2,32 @@ import noop from "lodash/noop";
 import config from "~/config";
 
 import {createProcess} from "../Helper";
-import WaitForResult from "./WaitForResult";
 import * as Key from "../Key";
 import Timeout from "../Timeout";
+import Click from "../Click";
+import Wait from "../Wait";
+
+import WaitForResult from "./WaitForResult";
 import keyMap from "./keyMap";
 
-export default function(num, skill, state) {
-  return createProcess("Combat.UseSkill", (_, $, done, fail) => {
+export default function(num, skill, target, state) {
+  return createProcess("Combat.UseSkill", ({manager}, $, done, fail) => {
     const doSkill = () => {
-      _.manager.process([
+      manager.process([
         WaitForResult()
       ]).then(() => done(true), fail);
 
-      _.manager.process([
+      manager.process([
         Key.Press(num), Timeout(config.keyDelay),
-        Key.Press(keyMap[skill])
+        Key.Press(keyMap[skill]), Timeout(config.keyDelay),
+        function checkSkillTarget() {
+          const selector = ".pop-select-member .btn-command-character";
+          return target ? manager.process([
+            Wait(selector),
+            Timeout(config.popupDelay),
+            Click(selector + "[pos='" + (target-1) + "']")
+          ]) : null;
+        }
       ]).then(noop, fail);
     };
 

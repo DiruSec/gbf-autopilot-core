@@ -11,14 +11,16 @@ const wrap = (func) => {
   };
 };
 
-export default function createGlobalVars(context, state, {done, fail, scriptPath}) {
+export default function createGlobalVars(context, state, extras) {
+  const {done, fail, env, scriptPath} = extras;
   const server = context.server;
 
   return {
-    context,
+    env,
     characters: {},
 
     _state: state,
+    _context: context, 
     logger: server.logger,
     script: {
       path: scriptPath,

@@ -1,7 +1,6 @@
 import path from "path";
 import {lua, lauxlib, lualib} from "fengari";
 import jslib from "fengari-interop";
-import assign from "lodash/assign";
 
 import config from "~/config";
 import {createProcess} from "../../Helper";
@@ -10,7 +9,7 @@ import createCodeRunner from "./createCodeRunner";
 import createGlobalVars from "./createGlobalVars";
 import setGlobalVars from "./setGlobalVars";
 
-export default function(scriptPath) {
+export default function(scriptPath, env) {
   return createProcess("Battle.Script", (context, state, done, fail) => {
     const L = lauxlib.luaL_newstate();
     const executeCode = createCodeRunner(L, context);
@@ -18,6 +17,7 @@ export default function(scriptPath) {
     lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
 
     const globalVars = createGlobalVars.call(this, context, state, {
+      env,
       scriptPath,
       done, fail
     });

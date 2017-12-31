@@ -25,7 +25,7 @@ const CheckLocation = createProcess("Support.StartBattle.CheckLocation", (contex
   }).then(done, fail);
 });
 
-const CheckLocationBeforeBattle = createProcess("Support.StartBattle.CheckLocationBeforeBattle", ({manager}) => {
+const CheckLocationBeforeBattle = createProcess("CheckLocationBeforeBattle", ({manager}) => {
   return manager.process([
     Timeout(config.redirectDelay),
     Location(),

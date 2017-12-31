@@ -12,14 +12,15 @@ const elementMap = {
   dark: 6,
   misc: 7,
   // Viramate's favorite tab
-  faves: "f"
+  faves: "f",
+  favorite: "f"
 };
 
 export default function(element) {
   const elementSelector = elementPrefix + elementMap[element.toLowerCase()];
   return createProcess("Support.SelectElement", function(_, $, done, fail) {
-    Check(elementSelector + ".selected").call(this, _).then(done, () => {
-      return Click(elementSelector).call(this, _);
-    }).then(done, fail);
+    Check(elementSelector + ".unselected").call(this, _).then(() => {
+      Click(elementSelector).call(this, _).then(done, fail);
+    }, done);
   });
 }

@@ -1,29 +1,30 @@
 import * as Battle from "~/server/steps/Battle";
 import * as Location from "~/server/steps/Location";
+import PipelineLoop from "~/server/steps/PipelineLoop";
 
-export default function DefaultPipeline(context) {
+export default function DefaultPipeline(env) {
   return [
     Location.Get(),
-    (_, location) => {
+    ({manager}, location) => {
       const pipeline = [];
 
       if (location.hash.startsWith("#raid")) {
-        pipeline.push(Battle.Loop());
+        pipeline.push(Battle.Loop(null, env));
       } else if (location.hash.startsWith("#quest/supporter")) {
-        context.questUrl = location.toString();
+        env.questUrl = location.hash;
         pipeline.push(Battle.Supporter());
       } else {
-        if (context.questUrl) {
-          this.logger.info("Using previous quest page:", context.questUrl);
-          pipeline.push(Location.Change(context.questUrl));
+        if (env.questUrl) {
+          this.logger.info("Using previous quest page:", env.questUrl);
+          pipeline.push(Location.Change(env.questUrl));
         } else {
           this.logger.info("Waiting for supporter page...");
           pipeline.push(Location.Wait("#quest/supporter"));
         }
       }
 
-      pipeline.push.apply(pipeline, DefaultPipeline.call(this, context));
-      return _.manager.process(pipeline);
+      pipeline.push(PipelineLoop.call(this, DefaultPipeline, env));
+      return manager.process(pipeline);
     }
   ];
 }
