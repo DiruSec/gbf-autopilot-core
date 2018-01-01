@@ -2,7 +2,7 @@ import {createProcess} from "./Helper";
 
 export default function Ajax(options) {
   return createProcess("Ajax", function() {
-    this.logger.debug("Ajax:", options.method || "GET", options.url);
+    this.logger.debug("Ajax:", options.method || "GET", options.url || options);
     return this.sendAction("ajax", options);
   });
 }

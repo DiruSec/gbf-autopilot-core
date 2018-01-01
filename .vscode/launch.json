@@ -9,6 +9,10 @@
         "request": "attach",
         "name": "Attach",
         "protocol": "inspector",
+        "sourceMaps": true,
+        "outFiles": [
+          "${workspaceRoot}/build/**/*.js"
+        ],
         "port": 9229
       }
     ]

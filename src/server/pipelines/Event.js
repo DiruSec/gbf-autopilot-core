@@ -7,7 +7,6 @@ import Wait from "~/server/steps/Wait";
 export default function EventPipeline(env) {
   const config = this.config;
   if (!config.EventMode.Enabled) return false;
-  const 
 
   return [
     Location.Change(config.EventMode.EventPageUrl),
@@ -20,7 +19,7 @@ export default function EventPipeline(env) {
         return manager.process([
           Location.Change(config.EventMode.NightmareModeUrl),
           Battle.Supporter({
-            url: config.EventMode.NightmareModeUrl
+            url: config.EventMode.NightmareModeUrl,
             summonAttribute: config.EventMode.NightmareModeSummonAttributeTab,
             summonPreferred: config.EventMode.NightmareModePreferredSummons,
             partyGroup: Number(config.PartySelection.PreferredNightmareModePartyGroup),

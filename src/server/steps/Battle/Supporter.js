@@ -4,6 +4,7 @@ import coreConfig from "~/config";
 import {createProcess} from "../Helper";
 
 import * as Support from "../Support";
+import RefillAP from "../Quest/RefillAP";
 import Timeout from "../Timeout";
 import Wait from "../Wait";
 import Ajax from "../Ajax";
@@ -22,17 +23,11 @@ export default function Supporter(options, env) {
     const partyDeck = options.partyDeck || Number(config.PartySelection.PreferredPartyDeck);
 
     function maybeRefillAP(context, {user, quest}) {
-      const options = {
-        url: "/item/use_normal_item",
-        method: "POST",
-        data: JSON.stringify({
-          item_id: 2,
-          num: 1,
-          special_token: null
-        }),
-      };
-      return quest.action_point > user.action_point ?
-        Ajax(options).call(this, context) : null;
+      if (quest.action_point > user.action_point) {
+        return RefillAP(1).call(this, context);
+      } else {
+        return null;
+      }
     }
 
     function checkAP() {
