@@ -2,6 +2,7 @@ import forEach from "lodash/forEach";
 import * as Battle from "../../Battle";
 import * as Combat from "../../Combat";
 import Timeout from "../../Timeout";
+import Stop from "../../Stop";
 
 const wrap = (func) => {
   return function() {
@@ -27,7 +28,7 @@ export default function createGlobalVars(context, state, extras) {
       done, fail
     },
     steps: {
-      Battle, Combat, Timeout
+      Battle, Combat, Timeout, Stop
     },
 
     error_handler: wrap(::server.defaultErrorHandler),

@@ -12,7 +12,7 @@ export default function DefaultPipeline(env) {
         pipeline.push(Battle.Loop(null, env));
       } else if (location.hash.startsWith("#quest/supporter")) {
         env.questUrl = location.hash;
-        pipeline.push(Battle.Supporter());
+        pipeline.push(Battle.Supporter(null, env));
       } else {
         if (env.questUrl) {
           this.logger.info("Using previous quest page:", env.questUrl);

@@ -4,7 +4,7 @@ const babel = require("gulp-babel");
 const log = require("fancy-log");
 
 gulp.task("build", () => {
-  return gulp.src("src/**/*.js")
+  return gulp.src("src/**/*.js", {base: "src"})
     .pipe(sourcemaps.init())
     .pipe(babel())
     .on("error", function(err) {

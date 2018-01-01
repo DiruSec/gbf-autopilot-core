@@ -8,7 +8,7 @@ const registerDebug = (server, hooks) => {
 
 export default function socket() {
   if (this.config.Log.DebugSocket) {
-    registerDebug(this, ["actionSuccess", "actionFail", "sendAction"]);
+    registerDebug(this, ["broadcast", "actionSuccess", "actionFail", "sendAction"]);
   }
   return {};
 }

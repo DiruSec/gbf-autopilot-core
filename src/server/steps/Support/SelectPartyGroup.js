@@ -1,16 +1,15 @@
 import {createProcess} from "../Helper";
+import * as Click from "../Click";
 import Check from "../Check";
-import Click from "../Click";
 
 const partyGroupPrefix = ".btn-select-group.id-";
 
 export default function(group) {
   const partyGroupSelector = partyGroupPrefix + group;
-  return createProcess("Support.SelectPartyGroup", function(context, lastResult, done, fail) {
+  return createProcess("Support.SelectPartyGroup", function(context) {
     this.logger.debug("Using party group:", group);
-    const promise = Check(partyGroupSelector + ".selected").call(this, context);
-    promise.then(done, () => {
-      Click(partyGroupSelector).call(this, context).then(done, fail);
-    });
+    return Click.Condition(partyGroupSelector, () => {
+      return Check(partyGroupSelector + ".selected").call(this, context);
+    }).call(this, context);
   });
 }

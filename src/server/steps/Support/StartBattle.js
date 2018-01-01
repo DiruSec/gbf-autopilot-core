@@ -1,45 +1,28 @@
-import config from "~/config";
+import noop from "lodash/noop";
 import {createProcess} from "../Helper";
-import Wait from "../Wait";
-import Check from "../Check";
-import Click from "../Click";
-import Timeout from "../Timeout";
-import Location from "../Location";
-
-const CheckLocation = createProcess("Support.StartBattle.CheckLocation", (context, location, done, fail) => {
-  const manager = context.manager;
-  if (location.hash.startsWith("#raid")) {
-    done();
-    return;
-  }
-
-  Check("#loading")(context).then(() => {
-    return manager.process([
-      CheckLocationBeforeBattle
-    ]);
-  }, () => {
-    return manager.process([
-      Click(".btn-usual-ok"),
-      CheckLocationBeforeBattle
-    ]);
-  }).then(done, fail);
-});
-
-const CheckLocationBeforeBattle = createProcess("CheckLocationBeforeBattle", ({manager}) => {
-  return manager.process([
-    Timeout(config.redirectDelay),
-    Location(),
-    CheckLocation
-  ]);
-});
+import * as Click from "../Click";
+import * as Location from "../Location";
 
 export default function() {
-  return createProcess("Support.StartBattle", ({manager}) => {
-    return manager.process([
-      Wait(".pop-deck.supporter .btn-usual-ok"),
-      Click(".pop-deck.supporter .btn-usual-ok"),
-      CheckLocationBeforeBattle,
-      Wait(".btn-attack-start.display-on")
-    ]);
+  return createProcess("Support.StartBattle", function(context, $, done, fail) {
+    this.logger.debug("Starting battle...");
+    var hasChanged = false;
+    const manager = context.manager;
+
+    manager.process([
+      Location.Wait(),
+      Location.Get(),
+      function checkLocation(_, location) {
+        if (location.hash.startsWith("#raid")) {
+          hasChanged = true;
+        } else {
+          throw "Unexpected page redirection: '" + location.hash + "'";
+        }
+      }
+    ]).then(noop, fail);
+
+    Click.Condition(".btn-usual-ok", () => hasChanged)
+      .call(this, context)
+      .then(done, fail);
   });
 }

@@ -15,3 +15,7 @@ function run_processes(processes)
   end)
   return coroutine.yield()
 end
+
+function Stop()
+  run_processes({steps:Stop()})
+end

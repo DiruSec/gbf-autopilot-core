@@ -1,6 +1,7 @@
-import {createProcess} from "./Helper";
+import {createProcess} from "../Helper";
+export Condition from "./Condition";
 
-export default function(selector, timeout) {
+export default function Click(selector, timeout) {
   return createProcess("Click", function($, _, done, fail) {
     this.logger.debug("Clicking element:", selector);
     this.sendAction("element", {selector, retry: true}, timeout).then((payload) => {
@@ -8,3 +9,5 @@ export default function(selector, timeout) {
     }).then(done, fail);
   });
 }
+
+export const Normal = Click;

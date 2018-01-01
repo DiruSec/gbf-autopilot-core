@@ -1,7 +1,7 @@
 import fs from "fs";
 import createCodeRunner from "./createCodeRunner";
 
-export const readScript = (path) => fs.readFileSync(path, {encoding: "utf-8"});
+export const readScript = (path) => fs.readFileSync(path);
 
 export default function createScriptRunner(L, context, executeCode) {
   executeCode = executeCode || createCodeRunner(context);
