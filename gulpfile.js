@@ -1,3 +1,4 @@
+const path = require("path");
 const gulp = require("gulp");
 const sourcemaps = require("gulp-sourcemaps");
 const babel = require("gulp-babel");
@@ -6,25 +7,30 @@ const del = require("del");
 
 gulp.task("clean", function() {
   return del([
-    "build/**/*.js"
+    "build/**/*.*",
+    "!build/.gitignore"
   ]);
 });
 
 gulp.task("build", gulp.series("clean", function() {
-  return gulp.src("src/**/*.js", {base: "src"})
+  return gulp.src("src/**/*.js")
     .pipe(sourcemaps.init())
-    .pipe(babel())
+    .pipe(babel({
+      sourceRoot: path.resolve(__dirname, "src")
+    }))
     .on("error", function(err) {
       log.error("babel", err.toString());
       this.emit("end");
     })
-    .pipe(sourcemaps.write("."))
+    .pipe(sourcemaps.write(".", {
+      includeContent: false,
+      sourceRoot: "../src"}
+    ))
     .pipe(gulp.dest("build"));
 }));
 
-gulp.task("watch", gulp.series("build", function(done) {
+gulp.task("watch", gulp.series("build", function() {
   gulp.watch("src/**/*.js", gulp.series("build"));
-  done();
 }));
 
 gulp.task("default", gulp.series("build"));

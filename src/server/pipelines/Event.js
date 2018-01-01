@@ -37,7 +37,6 @@ export default function EventPipeline(env) {
         ]);
       });
     },
-
     PipelineLoop.call(this, EventPipeline, env)
   ];
 }

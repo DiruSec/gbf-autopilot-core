@@ -1,5 +1,6 @@
 import {createProcess} from "../Helper";
 export Change from "./Change";
+export Reload from "./Reload";
 export Wait from "./Wait";
 
 export default function Location() {

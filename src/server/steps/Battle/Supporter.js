@@ -34,11 +34,11 @@ export default function Supporter(options, env) {
       var userData;
       return manager.process([
         Ajax("/quest/user_action_point"),
-        function setUserData(data) {
-          userData = data;
+        function setUserData(_, data) {
+          return userData = data;
         },
         Ajax("/quest/quest_data/" + hash[1] + "/" + hash[2]),
-        function composeData(questData) {
+        function composeData(_, questData) {
           return {
             user: userData,
             quest: questData
