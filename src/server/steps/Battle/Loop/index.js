@@ -1,4 +1,3 @@
-import noop from "lodash/noop";
 import {createProcess} from "../../Helper";
 import * as Location from "../../Location";
 import * as Combat from "../../Combat";
@@ -6,6 +5,7 @@ import Wait from "../../Wait";
 
 import CheckLocation from "./CheckLocation";
 import CheckNextButton from "./CheckNextButton";
+import CheckDimensionalHalo from "./CheckDimensionalHalo";
 import RunScript from "./RunScript";
 
 export default function Loop(scriptPath, env, count) {
@@ -18,14 +18,18 @@ export default function Loop(scriptPath, env, count) {
     const checkNextButton = CheckNextButton(() => [
       RunScript(scriptPath),
       Combat.Attack()
-    ], noop);
+    ], () => []);
+
+    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => [
+      Combat.Retreat()     
+    ]);
 
     manager.process([
       Wait(".btn-attack-start.display-on,.btn-result,.cnt-result"),
       Location.Get(),
-      CheckLocation(checkNextButton),
+      CheckLocation(checkDimensionalHalo),
       function runSteps(context, steps) {
-        steps = steps || [];
+        if (!steps) return false;
         steps.push(Loop(scriptPath, env, ++count));
         return manager.process(steps);
       }

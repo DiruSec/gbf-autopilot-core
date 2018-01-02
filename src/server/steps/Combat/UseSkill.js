@@ -11,24 +11,23 @@ import WaitForResult from "./WaitForResult";
 import keyMap from "./keyMap";
 
 export default function(num, skill, target, state) {
-  return createProcess("Combat.UseSkill", ({manager}, $, done, fail) => {
+  return createProcess("Combat.UseSkill", function(context, $, done, fail) {
+    const manager = context.manager;
+    const steps = [
+      Key.Press(num), Timeout(config.keyDelay),
+      Key.Press(keyMap[skill]), Timeout(config.keyDelay),
+      target ? function checkSkillTarget() {
+        const selector = ".pop-select-member .btn-command-character";
+        return manager.process([
+          Wait(selector),
+          Timeout(config.popupDelay),
+          Click(selector + "[pos='" + (target-1) + "']")
+        ]);
+      } : noop
+    ];
     const doSkill = () => {
-      manager.process([
-        WaitForResult()
-      ]).then(() => done(true), fail);
-
-      manager.process([
-        Key.Press(num), Timeout(config.keyDelay),
-        Key.Press(keyMap[skill]), Timeout(config.keyDelay),
-        function checkSkillTarget() {
-          const selector = ".pop-select-member .btn-command-character";
-          return target ? manager.process([
-            Wait(selector),
-            Timeout(config.popupDelay),
-            Click(selector + "[pos='" + (target-1) + "']")
-          ]) : null;
-        }
-      ]).then(noop, fail);
+      WaitForResult().call(this, context).then(() => done(true), fail);
+      manager.process(steps).then(noop, fail);
     };
 
     if (state) {

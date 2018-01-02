@@ -6,8 +6,6 @@ import Wait from "~/server/steps/Wait";
 
 export default function EventPipeline(env) {
   const config = this.config;
-  if (!config.EventMode.Enabled) return false;
-
   return [
     Location.Change(config.EventMode.EventPageUrl),
     // TODO: check for nightmare stage
@@ -40,3 +38,7 @@ export default function EventPipeline(env) {
     PipelineLoop.call(this, EventPipeline, env)
   ];
 }
+
+EventPipeline.test = function() {
+  return this.config.EventMode.Enabled;
+};

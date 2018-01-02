@@ -13,19 +13,19 @@ const wrap = (func) => {
 };
 
 export default function createGlobalVars(context, state, extras) {
-  const {done, fail, env, scriptPath} = extras;
   const server = context.server;
-
   return {
-    env,
+    env: extras.env,
     characters: {},
 
     _state: state,
     _context: context, 
+    _config: extras.config,
     logger: server.logger,
     script: {
-      path: scriptPath,
-      done, fail
+      path: extras.scriptPath,
+      done: extras.done, 
+      fail: extras.fail
     },
     steps: {
       Battle, Combat, Timeout, Stop

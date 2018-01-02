@@ -8,12 +8,14 @@ function update_state(state)
   logger:debug('Updating state')
   apply_global_vars(state)
   update_characters(state)
+  update_enemies(state)
 end
 
 function init_state(state)
   logger:debug('Initializing state')
   apply_global_vars(state)
   init_characters(state)
+  init_enemies(state)
 end
 
 function refresh_state()

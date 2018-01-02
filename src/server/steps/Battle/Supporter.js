@@ -4,17 +4,15 @@ import coreConfig from "~/config";
 import {createProcess} from "../Helper";
 
 import * as Support from "../Support";
-import RefillAP from "../Quest/RefillAP";
+import CheckAP from "../Quest/CheckAP";
 import Timeout from "../Timeout";
 import Wait from "../Wait";
-import Ajax from "../Ajax";
 
 export default function Supporter(options, env) {
   options = options || {};
   env = env || {};
 
-  const url = new URL(options.url || env.questUrl);
-  const hash = url.hash.match(/[^\d]+(\d+)\/(\d+)/);
+  const url = options.url || env.questUrl;
   return createProcess("Battle.Supporter", function({manager}) {
     const config = this.config;
     const summonAttribute = options.summonAttribute || config.Summons.DefaultSummonAttributeTab;
@@ -22,34 +20,8 @@ export default function Supporter(options, env) {
     const partyGroup = options.partyGroup || Number(config.PartySelection.PreferredPartyGroup);
     const partyDeck = options.partyDeck || Number(config.PartySelection.PreferredPartyDeck);
 
-    function maybeRefillAP(context, {user, quest}) {
-      if (quest.action_point > user.action_point) {
-        return RefillAP(1).call(this, context);
-      } else {
-        return null;
-      }
-    }
-
-    function checkAP() {
-      var userData;
-      return manager.process([
-        Ajax("/quest/user_action_point"),
-        function setUserData(_, data) {
-          return userData = data;
-        },
-        Ajax("/quest/quest_data/" + hash[1] + "/" + hash[2]),
-        function composeData(_, questData) {
-          return {
-            user: userData,
-            quest: questData
-          };
-        },
-        maybeRefillAP
-      ]);
-    }
-
     return manager.process([
-      url ? checkAP : noop,
+      url ? CheckAP(url) : noop,
       Wait(".atx-lead-link"),
       Support.SelectElement(summonAttribute),
       Timeout(coreConfig.scrollDelay),   
