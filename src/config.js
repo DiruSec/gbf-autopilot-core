@@ -2,6 +2,7 @@ import path from "path";
 import {name} from "../package.json";
 import TreasureEventPipeline from "~/server/pipelines/TreasureEvent";
 import EventPipeline from "~/server/pipelines/Event";
+import TrialPipeline from "~/server/pipelines/Trial";
 import DefaultPipeline from "~/server/pipelines/Default";
 
 export default {
@@ -16,6 +17,7 @@ export default {
 
   defaultPipeline: DefaultPipeline,
   pipelines: [
+    TrialPipeline,
     TreasureEventPipeline,
     EventPipeline
   ],

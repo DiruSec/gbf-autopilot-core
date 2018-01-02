@@ -66,7 +66,7 @@ function create_character(idx, chara)
       })
       if result then 
         skill_target = nil
-        refresh_state(nil)
+        refresh_state()
       end
       return self
     end,

@@ -1,7 +1,10 @@
-import {createProcess} from "../../Helper";
+import noop from "lodash/noop";
+
 import * as Location from "../../Location";
 import * as Combat from "../../Combat";
+import Check from "../../Check";
 import Wait from "../../Wait";
+import Step from "../../Step";
 
 import CheckLocation from "./CheckLocation";
 import CheckNextButton from "./CheckNextButton";
@@ -11,17 +14,30 @@ import RunScript from "./RunScript";
 export default function Loop(scriptPath, env, count) {
   env = env || {};
   count = count || 0;
-  return createProcess("Battle.Loop", function({manager}, $, done, fail) {
+  return Step("Battle.Loop", function({manager}, $, done, fail) {
     const config = this.config;
     scriptPath = scriptPath || config.Combat.LuaScript;
 
-    const checkNextButton = CheckNextButton(() => [
-      RunScript(scriptPath),
-      Combat.Attack()
-    ], () => []);
+    function checkAttackButton(context, location) {
+      if (!location.hash.startsWith("#raid")) return false;
+
+      return Check(".btn-attack-start.display-on")
+        .call(this, context)
+        .then(() => [
+          Combat.Attack()
+        ], noop);
+    }
+
+    const checkNextButton = CheckNextButton(() => {
+      return manager.process([
+        RunScript(scriptPath),
+        Location.Get(),
+        checkAttackButton
+      ]);
+    }, () => []);
 
     const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => [
-      Combat.Retreat()     
+      Combat.Retreat(),
     ]);
 
     manager.process([
