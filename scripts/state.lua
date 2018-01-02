@@ -18,6 +18,16 @@ function init_state(state)
   init_enemies(state)
 end
 
+function check_state(state)
+  local enemy_alive = 0
+  for i, boss in pairs(state.enemies) do
+    if boss.hp > 0 then 
+      enemy_alive = enemy_alive + 1
+    end
+  end
+  return enemy_alive > 0
+end
+
 function refresh_state()
   local state, err = run_processes({
     steps.Battle:State(nil)
@@ -26,5 +36,7 @@ function refresh_state()
     script:fail(err)
     return
   end
-  update_state(state)
+  if check_state(state) then
+    update_state(state)
+  end
 end

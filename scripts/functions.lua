@@ -1,6 +1,10 @@
 js = require 'js'
 
 function run_processes(processes)
+  if not _running then
+    return nil
+  end
+
   local processesArray = js.global:Array()
   for _, process in ipairs(processes) do
     processesArray:push(process)

@@ -3,14 +3,14 @@ import Step from "../Step";
 import Ajax from "../Ajax";
 import RefillAP from "./RefillAP";
 
-export default function(url, num) {
+export default function(env, url, num) {
   url = new URL(url);
   num = num || 1;
   const hash = url.hash.match(/[^\d]+(\d+)\/(\d+)/);
   return Step("Battle.CheckAP", function({manager}) {
     function maybeRefillAP(context, {user, quest}) {
       if (quest.action_point > user.action_point) {
-        return RefillAP(num).call(this, context);
+        return RefillAP(env, num).call(this, context);
       } else {
         return null;
       }

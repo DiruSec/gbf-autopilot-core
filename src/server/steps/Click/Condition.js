@@ -10,7 +10,7 @@ export default function Condition(selector, condition, delay) {
   if (!isFunction(condition) && !isString(condition)) {
     throw new Error("Condition parameter must be either a function or string!");
   }
-  delay = delay || coreConfig.popupDelay;
+  delay = delay || coreConfig.reclickDelay;
 
   if (isString(condition)) {
     var inversed = false;
@@ -43,6 +43,7 @@ export default function Condition(selector, condition, delay) {
         Timeout(delay)
       ]).then(() => startClick(done, fail), fail);
     };
+
     const startClick = (done, fail) => {
       const result = condition();
       if (result instanceof Promise) {

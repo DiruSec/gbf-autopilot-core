@@ -1,4 +1,3 @@
-import path from "path";
 import {lua, lauxlib, lualib} from "fengari";
 import jslib from "fengari-interop";
 
@@ -9,9 +8,9 @@ import createCodeRunner from "./createCodeRunner";
 import createGlobalVars from "./createGlobalVars";
 import setGlobalVars from "./setGlobalVars";
 
-export default function(scriptPath, env) {
+export default function(env, scriptPath) {
   return createProcess("Battle.Script", function(context, state, done, fail) {
-    const plugin = this.server.plugins[config.name];
+    const plugin = config.getPlugin(this.server);
     const globalVars = createGlobalVars.call(this, context, state, {
       env,
       scriptPath,

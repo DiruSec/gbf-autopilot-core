@@ -3,7 +3,7 @@ import Step from "../../Step";
 import State from "../State";
 import Script from "../Script";
 
-export default function(scriptPath, env) {
+export default function(env, scriptPath) {
   return Step(function runScript({manager}) {
     // run script when defined
     if (scriptPath) {
@@ -11,7 +11,7 @@ export default function(scriptPath, env) {
       const absoluteScriptPath = path.resolve(rootDir, scriptPath);
       return manager.process([
         State(),
-        Script(absoluteScriptPath, env)
+        Script(env, absoluteScriptPath)
       ]);
     } else {
       return null;

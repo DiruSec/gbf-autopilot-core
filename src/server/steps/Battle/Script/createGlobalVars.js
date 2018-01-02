@@ -15,9 +15,10 @@ const wrap = (func) => {
 export default function createGlobalVars(context, state, extras) {
   const server = context.server;
   return {
-    env: extras.env,
+    env: extras.env.scriptEnv,
     characters: {},
 
+    _running: true,
     _state: state,
     _context: context, 
     _config: extras.config,

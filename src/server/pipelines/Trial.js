@@ -9,13 +9,13 @@ export default function TrialPipeline(env) {
       const pipeline = [];
 
       if (location.hash.startsWith("#raid")) {
-        pipeline.push(Battle.Loop(null, env));
+        pipeline.push(Battle.Loop(env));
       } else {
         this.logger.info("Waiting for trial battle page...");
         pipeline.push(Location.Wait("#raid"));
       }
 
-      pipeline.push(PipelineLoop.call(this, TrialPipeline, env));
+      pipeline.push(PipelineLoop.call(this, env, TrialPipeline));
       return manager.process(pipeline);
     }
   ];

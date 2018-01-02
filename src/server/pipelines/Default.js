@@ -9,10 +9,10 @@ export default function DefaultPipeline(env) {
       const pipeline = [];
 
       if (location.hash.startsWith("#raid")) {
-        pipeline.push(Battle.Loop(null, env));
+        pipeline.push(Battle.Loop(env, null));
       } else if (location.hash.startsWith("#quest/supporter")) {
         env.questUrl = location.hash;
-        pipeline.push(Battle.Supporter(null, env));
+        pipeline.push(Battle.Supporter(env));
       } else {
         if (env.questUrl) {
           this.logger.info("Using previous quest page:", env.questUrl);
@@ -23,7 +23,7 @@ export default function DefaultPipeline(env) {
         }
       }
 
-      pipeline.push(PipelineLoop.call(this, DefaultPipeline, env));
+      pipeline.push(PipelineLoop.call(this, env, DefaultPipeline));
       return manager.process(pipeline);
     }
   ];

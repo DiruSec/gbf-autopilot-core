@@ -1,9 +1,10 @@
 import noop from "lodash/noop";
 
+import coreConfig from "~/config";
 import * as Location from "../../Location";
 import * as Combat from "../../Combat";
+import Timeout from "../../Timeout";
 import Check from "../../Check";
-import Wait from "../../Wait";
 import Step from "../../Step";
 
 import CheckLocation from "./CheckLocation";
@@ -11,7 +12,7 @@ import CheckNextButton from "./CheckNextButton";
 import CheckDimensionalHalo from "./CheckDimensionalHalo";
 import RunScript from "./RunScript";
 
-export default function Loop(scriptPath, env, count) {
+export default function Loop(env, scriptPath, count) {
   env = env || {};
   count = count || 0;
   return Step("Battle.Loop", function({manager}, $, done, fail) {
@@ -30,11 +31,15 @@ export default function Loop(scriptPath, env, count) {
 
     const checkNextButton = CheckNextButton(() => {
       return manager.process([
-        RunScript(scriptPath),
+        RunScript(env, scriptPath),
         Location.Get(),
         checkAttackButton
       ]);
-    }, () => []);
+    }, (inBattle) => {
+      return inBattle ? [
+        Timeout(coreConfig.redirectDelay)
+      ] : false;
+    });
 
     const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, function(context) {
       return Combat.Retreat().call(this, context);
@@ -45,7 +50,7 @@ export default function Loop(scriptPath, env, count) {
       CheckLocation(checkDimensionalHalo),
       function runSteps(context, steps) {
         if (!steps) return false;
-        steps.push(Loop(scriptPath, env, ++count));
+        steps.push(Loop(env, scriptPath, ++count));
         return manager.process(steps);
       }
     ]).then(done, fail);

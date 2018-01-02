@@ -13,6 +13,7 @@ export default {
   scrollDelay: 50,
   redirectDelay: 1500,
   actionDelay: 1500,
+  reclickDelay: 1500,
 
   rootDir: path.resolve(__dirname, ".."),
 
@@ -33,5 +34,8 @@ export default {
     "combat.lua",
   ],
 
-  treasureRequired: 3
+  treasureRequired: 3,
+  getPlugin(server) {
+    return server.plugins[this.name];
+  }
 };

@@ -9,8 +9,10 @@ export default function() {
 
   this.on("worker.beforeStart", ({manager}) => {
     // handle the pipelines
-    const plugin = this.plugins[config.name];
-    const env = {};
+    const plugin = config.getPlugin(this);
+    const env = plugin.env = {
+      scriptEnv: {}
+    };
 
     var selectedPipeline = plugin.defaultPipeline;
     forEach(plugin.pipelines, (pipeline) => {
@@ -24,6 +26,20 @@ export default function() {
     });
     manager.setPipeline(selectedPipeline.call(this, env));
   });
+
+  this.on("worker.afterStop", () => {
+    const plugin = config.getPlugin(this);
+    const env = plugin.env || {};
+    this.logger.info("AP potion used:", env.potUsed || 0);
+  });
+
+  const subscription = this.getObservable("socket.broadcast")
+    .filter(({name}) => name == "userId")
+    .subscribe(({payload}) => {
+      const plugin = config.getPlugin(this);
+      plugin.userId = payload;
+      subscription.unsubscribe();
+    });
 
   return {
     defaultPipeline: config.defaultPipeline,

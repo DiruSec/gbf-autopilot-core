@@ -1,9 +1,9 @@
 import {URL} from "url";
 
 import coreConfig from "~/config";
-import * as Location from "~/server/steps/Location";
 import * as Battle from "~/server/steps/Battle";
 import PipelineLoop from "~/server/steps/PipelineLoop";
+import OpenQuestPage from "~/server/steps/Quest/OpenPage";
 import CheckItem from "~/server/steps/Quest/CheckItem";
 
 export default function TreasureEventPipeline(env) {
@@ -15,19 +15,15 @@ export default function TreasureEventPipeline(env) {
   const itemId = parts[parts.length-1];
 
   const eventMode = [
-    Location.Change(config.EventMode.EventRaidUrl),
-    Battle.Supporter({
-      url: config.EventMode.EventRaidUrl
-    }, env),
-    Battle.Loop(config.EventMode.EventRaidScript, env)
+    OpenQuestPage(env, config.EventMode.EventRaidUrl),
+    Battle.Supporter(env),
+    Battle.Loop(env, config.EventMode.EventRaidScript)
   ];
 
   const treasureEventMode = [
-    Location.Change(url.toString()),
-    Battle.Supporter({
-      url: url.toString()
-    }, env),
-    Battle.Loop(config.TreasureEventMode.TreasureEventModeScript, env)
+    OpenQuestPage(env, url.toString()),
+    Battle.Supporter(env),
+    Battle.Loop(env, config.TreasureEventMode.TreasureEventModeScript)
   ];
 
   function checkQuest({manager}) {
@@ -42,7 +38,7 @@ export default function TreasureEventPipeline(env) {
 
   return [
     checkQuest,
-    PipelineLoop.call(this, TreasureEventPipeline, env)
+    PipelineLoop.call(this, env, TreasureEventPipeline)
   ];
 }
 
