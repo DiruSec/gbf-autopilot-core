@@ -14,15 +14,15 @@ export default function() {
       Location.Get(),
       function checkLocation(_, location) {
         if (location.hash.startsWith("#raid")) {
-          hasChanged = true;
+          return hasChanged = true;
         } else {
           throw "Unexpected page redirection: '" + location.hash + "'";
         }
       }
-    ]).then(noop, fail);
+    ]).then(done, fail);
 
     Click.Condition(".btn-usual-ok", () => hasChanged)
       .call(this, context)
-      .then(done, fail);
+      .then(noop, fail);
   });
 }

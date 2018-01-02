@@ -9,7 +9,7 @@ export default function(deck) {
   const partyDeckSelector = getPartyDeckSelector(deck);
   return createProcess("Support.SelectPartyDeck", function(context) {
     this.logger.debug("Using party deck:", deck);
-    return Click.Condition(partyDeckSelector, partyDeckSelector + ".flex-active")
+    return Click.Condition(partyDeckSelector, "!" + partyDeckSelector + ".flex-active")
       .call(this, context);
   });
 }

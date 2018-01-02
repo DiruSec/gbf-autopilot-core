@@ -36,12 +36,11 @@ export default function Loop(scriptPath, env, count) {
       ]);
     }, () => []);
 
-    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => [
-      Combat.Retreat(),
-    ]);
+    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, function(context) {
+      return Combat.Retreat().call(this, context);
+    });
 
     manager.process([
-      Wait(".btn-attack-start.display-on,.btn-result,.cnt-result"),
       Location.Get(),
       CheckLocation(checkDimensionalHalo),
       function runSteps(context, steps) {

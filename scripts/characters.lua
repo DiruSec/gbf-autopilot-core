@@ -22,6 +22,16 @@ function update_character(idx, chara, character)
   character.charge_gauge = chara.ougi
   character.is_alive = chara.alive
 
+  character.HasStatusEffect = function (self, id)
+    for _, effectId in pairs(chara.buffs) do
+      if id == tonumber(effectId) then return true end
+    end
+    for _, effectId in pairs(chara.debuffs) do
+      if id == tonumber(effectId) then return true end
+    end
+    return false
+  end
+
   if chara.skills then
     for i, skill in pairs(chara.skills) do
       local idx = i + 1
@@ -43,15 +53,6 @@ end
 function create_character(idx, chara)
   local skill_target = nil
   local character = {
-    HasStatusEffect = function (self, id)
-      for _, effectId in pairs(chara.buffs) do
-        if id == effectId then return true end
-      end
-      for _, effectId in pairs(chara.debuffs) do
-        if id == effectId then return true end
-      end
-      return false
-    end,
   
     WithWaitTime = function (self, time)
       run_processes({

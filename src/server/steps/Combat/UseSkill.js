@@ -10,28 +10,35 @@ import Wait from "../Wait";
 import WaitForResult from "./WaitForResult";
 import keyMap from "./keyMap";
 
-export default function(num, skill, target, state) {
+export default function(num, skillNum, target, state) {
   return createProcess("Combat.UseSkill", function(context, $, done, fail) {
     const manager = context.manager;
     const steps = [
       Key.Press(num), Timeout(config.keyDelay),
-      Key.Press(keyMap[skill]), Timeout(config.keyDelay),
+      Key.Press(keyMap[skillNum]), Timeout(config.keyDelay),
       target ? function checkSkillTarget() {
         const selector = ".pop-select-member .btn-command-character";
         return manager.process([
           Wait(selector),
           Timeout(config.popupDelay),
-          Click(selector + "[pos='" + (target-1) + "']")
+          Click(selector + "[pos='" + (target-1) + "']"),
+          Timeout(config.popupDelay),
         ]);
-      } : noop
+      } : Timeout(config.popupDelay),
+      Key.Press(" ")
     ];
     const doSkill = () => {
-      WaitForResult().call(this, context).then(() => done(true), fail);
+      WaitForResult().call(this, context).then(() => {
+        setTimeout(() => done(true), config.actionDelay);
+      }, fail);
       manager.process(steps).then(noop, fail);
     };
 
     if (state) {
-      state.party[num-1].skills[skill-1].available ? doSkill() : done(false);
+      const chara = (state.party[num-1] || {});
+      const skill = (chara.skills || [])[skillNum-1];
+      const available = (skill || {}).available;
+      available ? doSkill() : done(false);
     } else {
       doSkill();
     }

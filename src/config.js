@@ -12,6 +12,7 @@ export default {
   popupDelay: 500,
   scrollDelay: 50,
   redirectDelay: 1500,
+  actionDelay: 1500,
 
   rootDir: path.resolve(__dirname, ".."),
 
@@ -31,4 +32,6 @@ export default {
     "enemies.lua",
     "combat.lua",
   ],
+
+  treasureRequired: 3
 };
