@@ -1,12 +1,13 @@
-import {createProcess} from "../Helper";
 export Change from "./Change";
 export Reload from "./Reload";
 export Wait from "./Wait";
+import Step from "../Step";
 
-export default function Location() {
-  return createProcess("Location", function() {
-    return this.sendAction("location");
+exports = module.exports = function Location(worker) {
+  return Step(async function Location() {
+    return await worker.sendAction("location");
   });
-}
+};
 
-export const Get = Location;
+exports.Get = Location;
+exports["@require"] = ["worker"];

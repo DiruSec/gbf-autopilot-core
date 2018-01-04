@@ -1,8 +1,8 @@
-import {createProcess} from "./Helper";
+import Step from "./Step";
 
-export default function(regexp) {
-  return createProcess("WaitForAjax", function(context, lastResult, done, fail) {
-    const subscription = this.server.getObservable("socket.broadcast")
+exports = module.exports = function(server, regexp) {
+  return Step(function WaitForAjax(_, $, done, fail) {
+    const subscription = server.getObservable("socket.broadcast")
       .filter(({name}) => name == "ajaxFinish")
       .filter(({payload}) => payload.url.match(regexp))
       .subscribe(() => {
@@ -12,4 +12,6 @@ export default function(regexp) {
   }, {
     doNotTimeout: true
   });
-}
+};
+
+exports["@require"] = ["server"];

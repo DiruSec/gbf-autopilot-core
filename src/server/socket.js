@@ -9,5 +9,4 @@ const registerDebug = (server, hooks) => {
 
 export default function socket() {
   registerDebug(this, ["broadcast", "actionSuccess", "actionFail", "sendAction"]);
-  return {};
 }

@@ -2,14 +2,14 @@ import forEach from "lodash/forEach";
 import isFunction from "lodash/isFunction";
 import isUndefined from "lodash/isUndefined";
 
-export default function Step(name, callback, options) {
-  if (isFunction(name)) {
+export default function Step(ns, callback, options) {
+  if (isFunction(ns)) {
     options = callback;
-    callback = name;
-    name = callback.name || "<anonymous>";
+    callback = ns;
+    ns = null;
   }
   options = options || {};
-  options.name = name;
+  options.name = (ns ? ns + "." : "") + (callback.name || "<anonymous>");
 
   function process(context, lastResult) {
     return new Promise((resolve, reject) => {

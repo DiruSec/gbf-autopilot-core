@@ -1,7 +1,5 @@
 import * as Battle from "~/server/steps/Battle";
 import * as Location from "~/server/steps/Location";
-import PipelineLoop from "~/server/steps/PipelineLoop";
-import { testjs } from "fengari-interop";
 
 export default function DefaultPipeline(env) {
   if (!env.questCount) {

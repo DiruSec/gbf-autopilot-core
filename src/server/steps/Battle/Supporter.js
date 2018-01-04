@@ -1,5 +1,5 @@
 import coreConfig from "~/config";
-import {createProcess} from "../Helper";
+import {Step} from "../Helper";
 
 import * as Support from "../Support";
 import Timeout from "../Timeout";
@@ -9,12 +9,12 @@ export default function Supporter(env, options) {
   options = options || {};
   env = env || {};
 
-  return createProcess("Battle.Supporter", function({manager}) {
+  return Step("Battle.Supporter", function({manager}) {
     const config = this.config;
-    const summonAttribute = options.summonAttribute || config.Summons.DefaultSummonAttributeTab;
-    const summonPreferred = options.summonPreferred || config.Summons.PreferredSummons;
-    const partyGroup = options.partyGroup || Number(config.PartySelection.PreferredPartyGroup);
-    const partyDeck = options.partyDeck || Number(config.PartySelection.PreferredPartyDeck);
+    const summonAttribute = options.summonAttribute || env.summonAttribute || config.Summons.DefaultSummonAttributeTab;
+    const summonPreferred = options.summonPreferred || env.summonPreferred || config.Summons.PreferredSummons;
+    const partyGroup = options.partyGroup || env.partyGroup || Number(config.PartySelection.PreferredPartyGroup);
+    const partyDeck = options.partyDeck || env.partyDeck || Number(config.PartySelection.PreferredPartyDeck);
 
     return manager.process([
       Wait(".atx-lead-link"),

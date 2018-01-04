@@ -1,8 +1,10 @@
-import {createProcess} from "../Helper";
+import Step from "../Step";
 
-export default function(url) {
-  return createProcess("Location.Change", ({server, worker}) => {
-    server.logger.debug("Location change:", url);
-    return worker.sendAction("location.change", url);
+exports = module.exports = function(logger, worker, url) {
+  return Step("Location", async function Change() {
+    logger.debug("Location change:", url);
+    return await worker.sendAction("location.change", url);
   });
-}
+};
+
+exports["@require"] = ["logger", "worker"];

@@ -1,7 +1,6 @@
 import noop from "lodash/noop";
-import config from "~/config";
 
-import {createProcess} from "../Helper";
+import {Step} from "../Helper";
 import * as Key from "../Key";
 import Timeout from "../Timeout";
 import Click from "../Click";
@@ -10,28 +9,30 @@ import Wait from "../Wait";
 import WaitForResult from "./WaitForResult";
 import keyMap from "./keyMap";
 
-export default function(num, skillNum, target, state) {
-  return createProcess("Combat.UseSkill", function(context, $, done, fail) {
-    const manager = context.manager;
+exports = module.exports = function(process, run, config, num, skillNum, target, state) {
+  return Step("Combat", function UseSkill(_, $, done, fail) {
+    const checkSkillTarget = async () => {
+      const selector = ".pop-select-member .btn-command-character";
+      return await process([
+        [Wait, selector],
+        [Timeout, config.popupDelay],
+        [Click, selector + "[pos='" + (target-1) + "']"],
+        [Timeout, config.popupDelay],
+      ]);
+    };
+
     const steps = [
-      Key.Press(num), Timeout(config.keyDelay),
-      Key.Press(keyMap[skillNum]), Timeout(config.keyDelay),
-      target ? function checkSkillTarget() {
-        const selector = ".pop-select-member .btn-command-character";
-        return manager.process([
-          Wait(selector),
-          Timeout(config.popupDelay),
-          Click(selector + "[pos='" + (target-1) + "']"),
-          Timeout(config.popupDelay),
-        ]);
-      } : Timeout(config.popupDelay),
-      Key.Press(" ")
+      [Key.Press, num], [Timeout, config.keyDelay],
+      [Key.Press, keyMap[skillNum]], [Timeout, config.keyDelay],
+      target ? checkSkillTarget : [Timeout, config.popupDelay],
+      [Key.Press, " "]
     ];
+
     const doSkill = () => {
-      WaitForResult().call(this, context).then(() => {
+      run(WaitForResult).then(() => {
         setTimeout(() => done(true), config.actionDelay);
       }, fail);
-      manager.process(steps).then(noop, fail);
+      process(steps).then(noop, fail);
     };
 
     if (state) {
@@ -43,4 +44,6 @@ export default function(num, skillNum, target, state) {
       doSkill();
     }
   });
-}
+};
+
+exports["@require"] = ["process", "run", "coreConfig"];

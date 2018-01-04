@@ -1,8 +1,10 @@
-import {createProcess} from "../Helper";
+import Step from "../Step";
 
-export default function() {
-  return createProcess("Location.Reload", ({server, worker}) => {
-    server.logger.debug("Reloading page...");
-    return worker.sendAction("location.reload");
+exports = module.exports = function(logger, worker) {
+  return Step("Location", async function Reload() {
+    logger.debug("Reloading page...");
+    return await worker.sendAction("location.reload");
   });
-}
+};
+
+exports["@require"] = ["logger", "worker"];

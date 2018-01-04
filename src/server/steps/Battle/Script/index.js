@@ -2,15 +2,15 @@ import {lua, lauxlib, lualib} from "fengari";
 import jslib from "fengari-interop";
 
 import config from "~/config";
-import {createProcess} from "../../Helper";
+import Step from "../../Step";
 
 import createCodeRunner from "./createCodeRunner";
 import createGlobalVars from "./createGlobalVars";
 import setGlobalVars from "./setGlobalVars";
 
 export default function(env, scriptPath, setupScripts, mainScript) {
-  return createProcess("Battle.Script", function(context, state, done, fail) {
-    const plugin = config.getPlugin(this.server);
+  return Step("Battle.Script", function(context, state, done, fail) {
+    const extension = config.getExtension(this.server);
     const globalVars = createGlobalVars.call(this, context, state, {
       env,
       scriptPath,
@@ -28,7 +28,7 @@ export default function(env, scriptPath, setupScripts, mainScript) {
     lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
     setGlobalVars(L, globalVars);
     
-    (setupScripts || plugin.scripts || []).forEach(runScript);
-    runScript(mainScript || plugin.mainScript);
+    (setupScripts || extension.scripts || []).forEach(runScript);
+    runScript(mainScript || extension.mainScript);
   });
 }

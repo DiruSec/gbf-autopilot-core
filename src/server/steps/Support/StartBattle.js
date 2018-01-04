@@ -1,28 +1,23 @@
 import noop from "lodash/noop";
-import {createProcess} from "../Helper";
 import * as Click from "../Click";
 import * as Location from "../Location";
+import Step from "../Step";
 
-export default function() {
-  return createProcess("Support.StartBattle", function(context, $, done, fail) {
-    this.logger.debug("Starting battle...");
+export default function(logger, run) {
+  return Step("Support.StartBattle", (_, $, done, fail) => {
+    logger.debug("Starting battle...");
+
     var hasChanged = false;
-    const manager = context.manager;
-
-    manager.process([
-      Location.Wait(),
-      Location.Get(),
-      function checkLocation(_, location) {
-        if (location.hash.startsWith("#raid")) {
-          return hasChanged = true;
-        } else {
-          throw "Unexpected page redirection: '" + location.hash + "'";
-        }
+    run(Click.Condition, ".btn-usual-ok", () => hasChanged).then(noop, fail);
+    run(Location.Wait).then(() => run(Location.Get)).then((location) => {
+      if (location.hash.startsWith("#raid")) {
+        return hasChanged = true;
+      } else {
+        throw "Unexpected page redirection: '" + location.hash + "'";
       }
-    ]).then(done, fail);
+    }, fail);
 
-    Click.Condition(".btn-usual-ok", () => hasChanged)
-      .call(this, context)
-      .then(noop, fail);
   });
 }
+
+exports["@require"] = ["logger", "run"];

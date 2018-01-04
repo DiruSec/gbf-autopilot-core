@@ -1,15 +1,17 @@
-import {createProcess} from "../Helper";
 import * as Click from "../Click";
+import Step from "../Step";
 
 const getPartyDeckSelector = (deck) => {
   return `.prt-deck-slider li:nth-child(${deck}) > a`;
 };
 
-export default function(deck) {
+exports = module.exports = function(run, logger, deck) {
   const partyDeckSelector = getPartyDeckSelector(deck);
-  return createProcess("Support.SelectPartyDeck", function(context) {
-    this.logger.debug("Using party deck:", deck);
-    return Click.Condition(partyDeckSelector, "!" + partyDeckSelector + ".flex-active")
-      .call(this, context);
+  const toCheck = partyDeckSelector + ".flex-active";
+  return Step("Support.SelectPartyDeck", async () => {
+    logger.debug("Using party deck:", deck);
+    return await run(Click.Condition, partyDeckSelector, "!" + toCheck);
   });
-}
+};
+
+exports["@require"] = ["run", "logger"];

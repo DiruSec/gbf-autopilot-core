@@ -1,10 +1,11 @@
-import {createProcess} from "../Helper";
 import * as Click from "../Click";
+import Step from "../Step";
 
-export default function Attack() {
-  return createProcess("Combat.Attack", function(context) {
-    this.logger.debug("Attacking...");
-    return Click.Condition(".btn-attack-start", ".btn-attack-start.display-on")
-      .call(this, context);
+export default function(logger, run) {
+  return Step("Combat", async function Attack() {
+    logger.debug("Attacking...");
+    return await run(Click.Condition, ".btn-attack-start", ".btn-attack-start.display-on")
   });
 }
+
+exports["@require"] = ["logger", "run"];

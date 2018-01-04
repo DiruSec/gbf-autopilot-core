@@ -4,7 +4,7 @@ import CheckAP from "../Quest/CheckAP";
 import Step from "../Step";
 import Ajax from "../Ajax";
 
-export default function(env, url) {
+export default function(run, url) {
   url = new URL(url);
   const parts = url.hash.split("/");
   const ajaxOptions = {
@@ -18,11 +18,11 @@ export default function(env, url) {
     },
     dataType: "json"
   };
-  return Step("Quest.OpenPage", function({manager}) {
-    return manager.process([
-      CheckAP(env, url),
-      Ajax(ajaxOptions),
-      Location.Change(url.toString()),
-    ]);
+  return Step("Quest.OpenPage", async function() {
+    await run(CheckAP, url);
+    await run(Ajax, ajaxOptions);
+    return await run(Location.Change, url.toString());
   });
 }
+
+exports["@require"] = ["run"];

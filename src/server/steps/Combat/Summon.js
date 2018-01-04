@@ -1,33 +1,32 @@
 import noop from "lodash/noop";
 import config from "~/config";
 
-import {createProcess} from "../Helper";
 import * as Key from "../Key";
-import * as Battle from "../Battle";
 import Timeout from "../Timeout";
+import Step from "../Step";
 
 import WaitForResult from "./WaitForResult";
 import keyMap from "./keyMap";
 
-export default function(idx, state) {
-  return createProcess("Combat.Summon", function(context, _, done, fail) {
-    const manager = context.manager;
+exports = module.exports = function(run, process, idx, state) {
+  return Step("Combat", function Summon(_, $, done, fail) {
     const doSummon = () => {
-      manager.process([
-        WaitForResult()
-      ]).then(done, fail);
-      
-      manager.process([
-        Key.Press("5"), Timeout(config.keyDelay),
-        Key.Press(keyMap[idx]), Timeout(config.keyDelay),
-        Key.Press(" ")
+      run(WaitForResult).then(done, fail);
+
+      process([
+        [Key.Press, "5"], [Timeout, config.keyDelay],
+        [Key.Press, keyMap[idx]], [Timeout, config.keyDelay],
+        [Key.Press, " "]
       ]).then(noop, fail);
     };
 
     if (state) {
-      state.summons[idx-1].available ? doSummon() : done(false);
+      const summon = (state.summons[idx-1] || {});
+      summon.available ? doSummon() : done(false);
     } else {
       doSummon();
     }
   });
-}
+};
+
+exports["@require"] = ["run", "process"];

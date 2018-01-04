@@ -1,9 +1,11 @@
-import {createProcess} from "./Helper";
+import Step from "./Step";
 
-export default function PipelineLoop(env, pipeline) {
-  return createProcess("PipelineLoop", ({manager}) => {
-    return manager.process(pipeline.call(this, env));
+exports = module.exports = function PipelineLoop(env, manager, pipeline) {
+  return Step(function PipelineLoop() {
+    return manager.process(pipeline());
   }, {
     doNotTimeout: true
   });
-}
+};
+
+exports["@require"] = ["env", "manager"];

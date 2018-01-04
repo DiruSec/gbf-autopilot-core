@@ -1,14 +1,12 @@
-import {createProcess} from "../Helper";
 import WaitForAjax from "../WaitForAjax";
+import Step from "../Step";
 
-export default function() {
-  return createProcess("Combat.WaitForResult", function({manager}, _, done, fail) {
-    this.logger.debug("Waiting for action result");
-    manager.process([
-      WaitForAjax(/\/rest\/(multi)?raid\/.+_result\.json/)
-    ]).then(() => {
-      this.logger.debug("Action result received");
-      done();
-    }, fail);
+exports = module.exports = function(manager, logger, run) {
+  return Step("Combat", async function WaitForResult() {
+    logger.debug("Waiting for action result");
+    await run(WaitForAjax, /\/rest\/(multi)?raid\/.+_result\.json/);
+    logger.debug("Action result received");
   });
-}
+};
+
+exports["@require"] = ["manager", "logger", "run"];

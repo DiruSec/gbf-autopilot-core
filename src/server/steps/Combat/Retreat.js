@@ -3,25 +3,23 @@ import * as Click from "../Click";
 import WaitForAjax from "../WaitForAjax";
 import Step from "../Step";
 
-export default function() {
-  return Step("Combat.Retreat", function(context, $, done, fail) {
-    const manager = context.manager;
+exports = module.exports = function(run) {
+  return Step("Combat", async function Retreat() {
+    const fail = (err) => {
+      throw err;
+    };
 
     var hasRetreated = false;
-    WaitForAjax("/retire.json")
-      .call(this, context)
-      .then(() => hasRetreated = true, fail);
-
     var hasRedirected = false;
-    Location.Wait()
-      .call(this, context)
-      .then(() => hasRedirected = true, fail);
 
-    manager.process([
-      Click.Condition(".btn-raid-menu.menu", "!.pop-raid-menu.pop-show"),
-      Click.Condition(".btn-withdrow", "!.pop-result-withdraw.pop-show"),
-      Click.Condition(".pop-result-withdraw .btn-usual-ok", () => hasRetreated),
-      Click.Condition(".btn-result", () => hasRedirected)
-    ]).then(done, fail);
+    run(WaitForAjax, "/retire.json").then(() => hasRetreated = true, fail);
+    run(Location.Wait).then(() => hasRedirected = true, fail);
+
+    await run(Click.Condition, ".btn-raid-menu.menu", "!.pop-raid-menu.pop-show");
+    await run(Click.Condition, ".btn-withdrow", "!.pop-result-withdraw.pop-show");
+    await run(Click.Condition, ".pop-result-withdraw .btn-usual-ok", () => hasRetreated);
+    await run(Click.Condition, ".btn-result", () => hasRedirected);
   });
-}
+};
+
+exports["@require"] = ["run"];

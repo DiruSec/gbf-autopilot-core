@@ -1,8 +1,10 @@
-import {createProcess} from "./Helper";
+import Step from "./Step";
 
-export default function Ajax(options) {
-  return createProcess("Ajax", function() {
-    this.logger.debug("Ajax:", options.method || "GET", options.url || options);
-    return this.sendAction("ajax", options);
+exports = module.exports = function(logger, worker, options) {
+  return Step(function Ajax() {
+    logger.debug("Ajax:", options.method || "GET", options.url || options);
+    return worker.sendAction("ajax", options);
   });
-}
+};
+
+exports["@require"] = ["logger", "worker"];

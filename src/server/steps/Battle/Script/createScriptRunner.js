@@ -3,7 +3,7 @@ import createCodeRunner from "./createCodeRunner";
 
 export const readScript = (path) => fs.readFileSync(path);
 
-export default function createScriptRunner(L, context, executeCode) {
+export default function createScriptRunner(context, L, executeCode) {
   executeCode = executeCode || createCodeRunner(context);
 
   const logger = context.server.logger;

@@ -1,11 +1,11 @@
-import {createProcess} from "../Helper";
+import {Step} from "../Helper";
 import Viramate from "../Viramate";
 import assign from "lodash/assign";
 import forEach from "lodash/forEach";
 import values from "lodash/values";
 
 export default function State() {
-  return createProcess("Battle.State", function(context, _, done, fail) {
+  return Step("Battle.State", function(context, _, done, fail) {
     const worker = context.worker;
     const result = {};
     Viramate({type: "getCombatState"})(context).then((state) => {

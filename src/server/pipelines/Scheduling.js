@@ -38,10 +38,11 @@ export default function SchedulingPipeline(env) {
   }
 
   const config = this.config;
-  const schedulingScriptPath = path.resolve(this.rootDir, config.CustomizedScheduling.SchedulingLuaScript);
+  const scriptPath = path.resolve(this.rootDir, config.CustomizedScheduling.SchedulingLuaScript);
+  const mainScriptPath = path.resolve(coreConfig.scriptDir, "scheduling.lua");
 
   return [
-    Battle.Script(env, schedulingScriptPath, null, path.resolve(coreConfig.scriptDir, "scheduling.lua"))
+    Battle.Script(env, scriptPath, null, mainScriptPath)
   ];
 }
 

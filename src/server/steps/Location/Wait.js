@@ -1,9 +1,9 @@
 import {URL} from "url";
-import {createProcess} from "../Helper";
+import Step from "../Step";
 
-export default function(url) {
-  return createProcess("Location.Wait", function(_, $, done, fail) {
-    const subscription = this.server.getObservable("socket.broadcast")
+exports = module.exports = function(server, url) {
+  return Step("Location", function Wait(_, $, done, fail) {
+    const subscription = server.getObservable("socket.broadcast")
       .filter(({name}) => name == "hashchange")
       .filter(({payload}) => payload.newUrl.match(url))
       .map(({payload}) => ({
@@ -15,4 +15,6 @@ export default function(url) {
         done(evt);
       }, fail);
   });
-}
+};
+
+exports["@require"] = ["server"];

@@ -1,4 +1,4 @@
-import {createProcess} from "../Helper";
+import Step from "../Step";
 
 const mapping = {
   "space": " "
@@ -8,11 +8,17 @@ const nameMapping = {
   " ": "<space>"
 };
 
-export function Press(key) {
-  return createProcess("Key.Press", ({server}) => {
+function Press(server, logger, key) {
+  return Step("Key", async function Press() {
     key = mapping[key] ? mapping[key] : key;
     const name = nameMapping[key] ? nameMapping[key] : key;
-    server.logger.debug("Keypress:", name);
-    return server.makeRequest("key/press", {key});
+    logger.debug("Keypress:", name);
+    return await server.makeRequest("key/press", {key});
   });
 }
+
+Press["@require"] = ["server", "logger"];
+
+module.exports = {
+  Press
+};

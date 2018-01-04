@@ -1,15 +1,16 @@
-import {createProcess} from "../Helper";
 import * as Key from "../Key";
 import * as Battle from "../Battle";
+import Step from "../Step";
 
-export default function(enable) {
-  return createProcess("Combat.ChargeAttack", function(context, _, done, fail) {
-    this.logger.debug("Charge attack:", enable);
-    const doToggle = () => Key.Press("c")(context).then(done, fail);
-    Battle.State()(context).then((state) => {
-      (enable && state.lock === 1) ||
-      (!enable && state.lock === 0) ?
-        doToggle() : done();
-    });
+exports = module.exports = function(logger, run, enable) {
+  const doToggle = async () => run(Key.Press, "c");
+  return Step("Combat", async function ChargeAttack() {
+    logger.debug("Charge attack:", enable);
+    const state = await run(Battle.State);
+    if ((enable && state.lock === 1) || (!enable && state.lock === 0)) {
+      await doToggle();
+    }
   });
-}
+};
+
+exports["@require"] = ["logger", "run"];

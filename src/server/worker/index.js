@@ -1,5 +1,5 @@
 import workerHandler from "./WorkerHandler";
 
-export default function worker() {
-  return workerHandler.call(this);
+export default function worker(extension) {
+  workerHandler.call(this, extension);
 }
