@@ -4,8 +4,8 @@ import ClickNextButton from "./ClickNextButton";
 
 export default function(next, stop) {
   return Step(function checkNextButton(context) {
-    next = next.bind(this, context);
-    stop = stop.bind(this, context);
+    next = next.bind(this);
+    stop = stop.bind(this);
 
     return Check(".btn-result")
       .call(this, context)

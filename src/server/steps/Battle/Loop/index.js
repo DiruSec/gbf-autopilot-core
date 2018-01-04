@@ -5,6 +5,8 @@ import * as Location from "../../Location";
 import * as Combat from "../../Combat";
 import Timeout from "../../Timeout";
 import Check from "../../Check";
+import Click from "../../Click";
+import Wait from "../../Wait";
 import Step from "../../Step";
 
 import CheckLocation from "./CheckLocation";
@@ -37,8 +39,13 @@ export default function Loop(env, scriptPath, count) {
       ]);
     }, (inBattle) => {
       return inBattle ? [
+        Timeout(coreConfig.redirectDelay),
+      ] : manager.process([
+        Timeout(coreConfig.redirectDelay),
+        Wait(".cnt-result"),
+        Click(".btn-usual-ok"),
         Timeout(coreConfig.redirectDelay)
-      ] : false;
+      ]).then(() => false);
     });
 
     const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, function(context) {
