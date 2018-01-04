@@ -1,3 +1,4 @@
+import assign from "lodash/assign";
 import forEach from "lodash/forEach";
 import * as Battle from "../../Battle";
 import * as Combat from "../../Combat";
@@ -14,8 +15,8 @@ const wrap = (func) => {
 
 export default function createGlobalVars(context, state, extras) {
   const server = context.server;
-  return {
-    env: extras.env.scriptEnv,
+  return assign(extras.env.scriptEnv, {
+    vars: extras.env.scriptVars,
     characters: {},
 
     _running: true,
@@ -33,5 +34,5 @@ export default function createGlobalVars(context, state, extras) {
     },
 
     error_handler: wrap(::server.defaultErrorHandler),
-  };
+  });
 }

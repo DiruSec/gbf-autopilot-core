@@ -8,7 +8,7 @@ import createCodeRunner from "./createCodeRunner";
 import createGlobalVars from "./createGlobalVars";
 import setGlobalVars from "./setGlobalVars";
 
-export default function(env, scriptPath) {
+export default function(env, scriptPath, setupScripts, mainScript) {
   return createProcess("Battle.Script", function(context, state, done, fail) {
     const plugin = config.getPlugin(this.server);
     const globalVars = createGlobalVars.call(this, context, state, {
@@ -28,7 +28,7 @@ export default function(env, scriptPath) {
     lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
     setGlobalVars(L, globalVars);
     
-    plugin.scripts.forEach(runScript);
-    runScript(plugin.mainScript);
+    (setupScripts || plugin.scripts || []).forEach(runScript);
+    runScript(mainScript || plugin.mainScript);
   });
 }

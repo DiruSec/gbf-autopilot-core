@@ -1,5 +1,6 @@
 import path from "path";
 import {name} from "../package.json";
+import SchedulingPipeline from "~/server/pipelines/Scheduling";
 import TreasureEventPipeline from "~/server/pipelines/TreasureEvent";
 import EventPipeline from "~/server/pipelines/Event";
 import TrialPipeline from "~/server/pipelines/Trial";
@@ -19,6 +20,7 @@ export default {
 
   defaultPipeline: DefaultPipeline,
   pipelines: [
+    SchedulingPipeline,
     TrialPipeline,
     TreasureEventPipeline,
     EventPipeline
@@ -36,6 +38,6 @@ export default {
 
   treasureRequired: 3,
   getPlugin(server) {
-    return server.plugins[this.name];
+    return server.coreExtension;
   }
 };

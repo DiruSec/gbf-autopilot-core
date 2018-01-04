@@ -19,7 +19,7 @@ export default function Loop(env, scriptPath, count) {
   count = count || 0;
   return Step("Battle.Loop", function({manager}, $, done, fail) {
     const config = this.config;
-    scriptPath = scriptPath || config.Combat.LuaScript;
+    scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
 
     function checkAttackButton(context, location) {
       if (!location.hash.startsWith("#raid")) return false;

@@ -11,7 +11,8 @@ export default function() {
     // handle the pipelines
     const plugin = config.getPlugin(this);
     const env = plugin.env = {
-      scriptEnv: {}
+      scriptEnv: {},
+      scriptVars: {}
     };
 
     var selectedPipeline = plugin.defaultPipeline;
