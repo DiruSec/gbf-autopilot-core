@@ -1,7 +1,8 @@
 import Step from "../Step";
-import Ajax from "../Ajax";
 
-export default function UseItem(worker, logger, run, item_id, num) {
+exports = module.exports = (worker, logger, require) => (item_id, num) => {
+  const Ajax = require("steps/Ajax");
+
   num = num || 1;
   const options = {
     url: "/item/use_normal_item",
@@ -11,9 +12,9 @@ export default function UseItem(worker, logger, run, item_id, num) {
       special_token: null
     }),
   };
-  return Step("Quest.UseItem", async function() {
-    return await run(Ajax, options);
+  return Step("Quest", function UseItem() {
+    return Ajax(options);
   });
-}
+};
 
-exports["@require"] = ["worker", "logger", "run"];
+exports["@require"] = ["worker", "logger", "require"];

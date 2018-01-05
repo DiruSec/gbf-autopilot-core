@@ -1,5 +1,4 @@
-import Check from "../Check";
-import Click from "../Click";
+import noop from "lodash/noop";
 import Step from "../Step";
 
 const elementPrefix = ".icon-supporter-type-";
@@ -16,16 +15,15 @@ const elementMap = {
   favorite: "f"
 };
 
-exports = module.exports = function(run, element) {
+exports = module.exports = (require) => (element) => {
+  const Check = require("steps/Check");
+  const Click = require("steps/Click");
   const elementSelector = elementPrefix + elementMap[element.toLowerCase()];
-  return Step("Support.SelectElement", async () => {
-    try {
-      await run(Check, elementSelector + ".unselected");
-    } catch (err) {
-      return err;
-    }
-    return await run(Click, elementSelector);
+  return Step("Support", function SelectElement() {
+    return Check(elementSelector + ".unselected").then(() => {
+      return Click(elementSelector);
+    }, noop);
   });
 };
 
-exports["@require"] = ["run"];
+exports["@require"] = ["require"];

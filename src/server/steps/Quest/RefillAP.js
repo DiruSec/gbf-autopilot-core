@@ -1,16 +1,16 @@
-import UseItem from "./UseItem";
 import Step from "../Step";
 
-export default function RefillAP(env, run, logger, num) {
+exports = module.exports = (env, require, logger) => (num) => {
   num = num || 1;
   env.potUsed = env.potUsed || 0;
-  return Step("Quest.RefillAP", async function() {
+  const UseItem = require("steps/Quest/UseItem");
+  return Step("Quest", async function RefillAP() {
     logger.debug("Refilling AP...");
-    await run(UseItem, 2, num);
+    await UseItem(2, num);
     env.potUsed++;
     logger.debug("Pot used:", env.potUsed);
     return true;
   });
-}
+};
 
-exports["@require"] = ["env", "run", "logger"];
+exports["@require"] = ["env", "require", "logger"];

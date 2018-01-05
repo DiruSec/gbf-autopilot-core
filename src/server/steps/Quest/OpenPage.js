@@ -1,12 +1,12 @@
 import {URL} from "url";
-import * as Location from "../Location";
-import CheckAP from "../Quest/CheckAP";
 import Step from "../Step";
-import Ajax from "../Ajax";
 
-export default function(run, url) {
-  url = new URL(url);
-  const parts = url.hash.split("/");
+exports = module.exports = (require) => (url) => {
+  const CheckAP = require("steps/Quest/CheckAP");
+  const Location = require("steps/Location");
+  const Ajax = require("steps/Ajax");
+
+  const parts = new URL(url).hash.split("/");
   const ajaxOptions = {
     url: "/quest/set_return_point",
     method: "POST",
@@ -18,11 +18,11 @@ export default function(run, url) {
     },
     dataType: "json"
   };
-  return Step("Quest.OpenPage", async function() {
-    await run(CheckAP, url);
-    await run(Ajax, ajaxOptions);
-    return await run(Location.Change, url.toString());
+  return Step("Quest", async function OpenPage() {
+    await CheckAP(url);
+    await Ajax(ajaxOptions);
+    return await require(Location.Change, url.toString());
   });
-}
+};
 
-exports["@require"] = ["run"];
+exports["@require"] = ["require"];

@@ -1,18 +1,20 @@
+import path from "canonical-path";
 import forEach from "lodash/forEach";
-import {Container} from "electrolyte";
 
 export default class WorkerContainer {
   constructor(context) {
     this.context = context;
     this.registers = {};
-    this.container = new Container;
-    this.container.use(::this.resolve);
+    this.components = {};
     this.setup();
   }
 
   setup() {
-    forEach(this.context, ::this.register);
+    forEach(this.context, (value, name) => this.register(name, value));
+    this.register("container", this);
+    this.register("context", this.context);
     this.register("inject", ::this.inject);
+    this.register("require", ::this.require);
     this.register("process", ::this.process);
     this.register("run", ::this.run);
   }
@@ -28,24 +30,38 @@ export default class WorkerContainer {
 
   inject(object) {
     const components = (object["@require"] || []).map((name) => {
-      return this.container.create(name);
+      return this.resolve(name);
     });
-    return object.bind.apply(object, components);
+    return object.apply(object, components);
   }
 
   process(steps) {
-    return this.context.process(steps.map((args) => {
-      if (!Array.isArray(args)) args = [args];
-      const step = args.shift();
-      const injected = this.inject(step);
-      return injected.apply(injected, args);
-    }));
+    return this.context.process(steps);
   }
 
-  run() {
-    const args = [].slice.call(arguments, 0);
-    const step = args.shift();
-    const injected = this.inject(step);
-    return this.context.run(injected.apply(injected, args));
+  run(step) {
+    return this.context.run(step);
+  }
+
+  require(obj) {
+    if (typeof obj === "string") {
+      const id = path.normalize(path.join("..", obj));
+      if (this.components[id]) {
+        return this.components[id];
+      }
+
+      const component = this.require(require(id));
+      return this.components[id] = component;
+    }
+
+    if (typeof obj !== "function" || !obj["@require"]) {
+      return obj;
+    }
+
+    obj = this.inject(obj);
+    Object.keys(obj).forEach((attr) => {
+      obj[attr] = this.require(obj[attr]);
+    });
+    return obj;
   }
 }

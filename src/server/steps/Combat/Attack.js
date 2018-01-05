@@ -1,11 +1,14 @@
-import * as Click from "../Click";
 import Step from "../Step";
 
-export default function(logger, run) {
+exports = module.exports = (logger, config, require) => () => {
+  const Click = require("steps/Click");
+  const Timeout = require("steps/Timeout");
+
   return Step("Combat", async function Attack() {
     logger.debug("Attacking...");
-    return await run(Click.Condition, ".btn-attack-start", ".btn-attack-start.display-on")
+    await Click.Condition(".btn-attack-start", ".btn-attack-start.display-on");
+    await Timeout(config.Combat.MinWaitTimeInMsAfterAttack);
   });
-}
+};
 
-exports["@require"] = ["logger", "run"];
+exports["@require"] = ["logger", "config", "require"];

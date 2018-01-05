@@ -1,6 +1,6 @@
 import Step from "../Step";
 
-exports = module.exports = function(logger, worker) {
+exports = module.exports = (logger, worker) => () => {
   return Step("Location", async function Reload() {
     logger.debug("Reloading page...");
     return await worker.sendAction("location.reload");

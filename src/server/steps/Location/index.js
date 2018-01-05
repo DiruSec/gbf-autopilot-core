@@ -1,13 +1,13 @@
-export Change from "./Change";
-export Reload from "./Reload";
-export Wait from "./Wait";
 import Step from "../Step";
 
-exports = module.exports = function Location(worker) {
+exports = module.exports = (worker) => () => {
   return Step(async function Location() {
     return await worker.sendAction("location");
   });
 };
 
-exports.Get = Location;
+exports.Get = exports;
+exports.Change = require("./Change");
+exports.Reload = require("./Reload");
+exports.Wait = require("./Wait");
 exports["@require"] = ["worker"];

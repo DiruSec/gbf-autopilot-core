@@ -1,4 +1,4 @@
-import path from "path";
+import path from "canonical-path";
 import assign from "lodash/assign";
 import forEach from "lodash/forEach";
 import coreConfig from "~/config";

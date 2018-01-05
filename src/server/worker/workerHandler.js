@@ -1,4 +1,4 @@
-import path from "path";
+import path from "canonical-path";
 import config from "~/config";
 
 import onBeforeStart from "./events/onBeforeStart";

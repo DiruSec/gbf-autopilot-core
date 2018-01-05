@@ -1,52 +1,51 @@
 import {URL} from "url";
 
-import coreConfig from "~/config";
-import * as Location from "~/server/steps/Location";
-import PipelineLoop from "~/server/steps/PipelineLoop";
-import CheckItem from "~/server/steps/Quest/CheckItem";
-import DefaultPipeline from "./Default";
+exports = module.exports = (env, config, coreConfig, process, require) => {
+  const Location = require("steps/Location");
+  const CheckItem = require("steps/Quest/CheckItem");
+  const DefaultPipeline = require("pipelines/Default");
 
-export default function TreasureEventPipeline(env) {
-  const config = this.config;
   const treasureRequired = coreConfig.treasureRequired;
-
   const url = new URL(config.TreasureEventMode.TreasureEventSoloUrl);
   const parts = url.hash.split("/");
   const itemId = parts[parts.length-1];
 
   const treasureSoloMode = () => {
     env.questUrl = config.TreasureEventMode.TreasureEventSoloUrl;
-    env.luaString = config.TreasureEventMode.TreasureEventModeScript;
+    env.luaScript = config.TreasureEventMode.TreasureEventSoloModeScript;
   };
 
   const treasureRaidMode = () => {
     env.questUrl = config.TreasureEventMode.TreasureEventRaidUrl;
-    env.luaString = config.TreasureEventMode.TreasureEventModeScript;
+    env.luaScript = config.TreasureEventMode.TreasureEventRaidModeScript;
   };
 
-  function checkQuest({manager}) {
-    return manager.process([
-      CheckItem(itemId),
-      function checkTreasure(context, count) {
-        config.TreasureEventMode.TreasureEventRaidUrl && count >= treasureRequired ?
-          treasureRaidMode() : treasureSoloMode();
-        env.questCount = 0;
-        env.maxQuest = 1;
-        return true;
-      }
-    ]);
-  }
+  const checkTreasure = (context, count) => {
+    config.TreasureEventMode.TreasureEventRaidUrl && count >= treasureRequired ?
+      treasureRaidMode() : treasureSoloMode();
+    env.questCount = 0;
+    env.maxQuest = 1;
+    return true;
+  };
 
-  return [
+  const checkQuest = () => process([
+    CheckItem(itemId),
+    checkTreasure
+  ]);
+
+  const steps = [
     Location.Change(config.TreasureEventMode.TreasureEventUrl),
     checkQuest,
-    function runPipeline({manager}) {
-      return manager.process(DefaultPipeline.call(this, env));
-    },
-    PipelineLoop.call(this, env, TreasureEventPipeline)
+    () => process(DefaultPipeline),
+    () => process(steps)
   ];
-}
 
-TreasureEventPipeline.test = function() {
-  return this.config.TreasureEventMode.Enabled;
+  return steps;
 };
+
+
+exports.test = (config) => () => {
+  return config.TreasureEventMode.Enabled;
+};
+exports.test["@require"] = ["config"];
+exports["@require"] = ["env", "config", "coreConfig", "process", "require"];

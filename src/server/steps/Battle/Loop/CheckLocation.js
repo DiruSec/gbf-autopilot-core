@@ -1,12 +1,14 @@
 import Step from "../../Step";
 import Wait from "../../Wait";
 
-export default function(next) {
-  return Step(function checkLocation({manager}, location) {
+exports = module.exports = function(process, next) {
+  return Step(function checkLocation(_, location) {
     if (!location.hash.startsWith("#raid")) return false;
-    return manager.process([
-      Wait(".btn-attack-start.display-on,.btn-result,.cnt-result"),
+    return process([
+      [Wait, ".btn-attack-start.display-on,.btn-result,.cnt-result"],
       next
     ]);
   });
-}
+};
+
+exports["@require"] = ["process"];

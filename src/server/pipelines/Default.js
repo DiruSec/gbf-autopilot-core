@@ -1,39 +1,41 @@
-import * as Battle from "~/server/steps/Battle";
-import * as Location from "~/server/steps/Location";
-
-export default function DefaultPipeline(env) {
+exports = module.exports = (env, logger, process, require) => {
   if (!env.questCount) {
     env.questCount = 0;
   }
-  return [
+
+  const Location = require("steps/Location");
+  const Battle = require("steps/Battle");
+  const steps = [
     Location.Get(),
-    ({manager}, location) => {
+    (_, location) => {
       const pipeline = [];
 
       if (location.hash.startsWith("#raid")) {
         env.questCount++;
-        pipeline.push(Battle.Loop(env, null));
+        pipeline.push(Battle.Loop());
       } else if (location.hash.startsWith("#quest/supporter")) {
         env.questUrl = location.hash;
-        pipeline.push(Battle.Supporter(env));
+        pipeline.push(Battle.Supporter());
       } else {
         if (env.questUrl) {
-          this.logger.info("Using previous quest page:", env.questUrl);
+          logger.info("Using previous quest page:", env.questUrl);
           pipeline.push(Location.Change(env.questUrl));
         } else {
-          this.logger.info("Waiting for supporter page...");
+          logger.info("Waiting for supporter page...");
           pipeline.push(Location.Wait("#quest/supporter"));
         }
       }
 
       pipeline.push(() => {
-        if (env.maxQuest && env.questCount >= env.maxQuest) {
-          return true;
+        if (!env.maxQuest || env.questCount < env.maxQuest) {
+          return process(steps);
         }
-        const nextPipeline = DefaultPipeline.call(this, env);
-        return manager.process(nextPipeline);
+        return true;
       });
-      return manager.process(pipeline);
+      return process(pipeline);
     }
   ];
-}
+  return steps;
+};
+
+exports["@require"] = ["env", "logger", "process", "run"];

@@ -9,11 +9,9 @@ export default function(extension) {
       scriptVars: {}
     };
 
-    const worker = context.worker;
     const container = context.container = new WorkerContainer(context);
-    container.register("logger", worker.logger)
-      .register("config", worker.config)
-      .register("coreConfig", coreConfig)
+    container.register("coreConfig", coreConfig)
+      .register("extension", extension)
       .register("env", env);
 
     var selectedPipeline = container.inject(extension.defaultPipeline);

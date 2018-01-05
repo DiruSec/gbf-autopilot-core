@@ -1,16 +1,16 @@
-import * as Key from "../Key";
-import * as Battle from "../Battle";
 import Step from "../Step";
 
-exports = module.exports = function(logger, run, enable) {
-  const doToggle = async () => run(Key.Press, "c");
+exports = module.exports = (logger, require) => (enable) => {
+  const Battle = require("steps/Battle");
+  const Key = require("steps/Key");
+
   return Step("Combat", async function ChargeAttack() {
     logger.debug("Charge attack:", enable);
-    const state = await run(Battle.State);
+    const state = await Battle.State();
     if ((enable && state.lock === 1) || (!enable && state.lock === 0)) {
-      await doToggle();
+      await Key.Press("c");
     }
   });
 };
 
-exports["@require"] = ["logger", "run"];
+exports["@require"] = ["logger", "require"];

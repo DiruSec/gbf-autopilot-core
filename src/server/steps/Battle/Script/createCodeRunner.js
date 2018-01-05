@@ -1,7 +1,6 @@
 import {lua, lauxlib} from "fengari";
 
-export default function createCodeRunner(context, L) {
-  const logger = context.server.logger;
+exports = module.exports = (logger) => (L) => {
   return function executeCode(code) {
     const result = lauxlib.luaL_dostring(L, lua.to_luastring(code));
 
@@ -13,4 +12,6 @@ export default function createCodeRunner(context, L) {
       }
     }
   };
-}
+};
+
+exports["@require"] = ["logger"];

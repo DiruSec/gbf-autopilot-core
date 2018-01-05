@@ -1,9 +1,5 @@
 import assign from "lodash/assign";
 import forEach from "lodash/forEach";
-import * as Battle from "../../Battle";
-import * as Combat from "../../Combat";
-import Timeout from "../../Timeout";
-import Stop from "../../Stop";
 
 const wrap = (func) => {
   return function() {
@@ -13,17 +9,21 @@ const wrap = (func) => {
   };
 };
 
-export default function createGlobalVars(context, state, extras) {
-  const server = context.server;
-  return assign(extras.env.scriptEnv, {
-    vars: extras.env.scriptVars,
+exports = module.exports = (env, server, logger, context, config, require) => (state, extras) => {
+  const Battle = require("steps/Battle");
+  const Combat = require("steps/Combat");
+  const Timeout = require("steps/Timeout");
+  const Stop = require("steps/Stop");
+
+  return assign(env.scriptEnv, {
+    vars: env.scriptVars,
     characters: {},
 
     _running: true,
     _state: state,
     _context: context, 
-    _config: extras.config,
-    logger: server.logger,
+    _config: config,
+    logger: logger,
     script: {
       path: extras.scriptPath,
       done: extras.done, 
@@ -35,4 +35,6 @@ export default function createGlobalVars(context, state, extras) {
 
     error_handler: wrap(::server.defaultErrorHandler),
   });
-}
+};
+
+exports["@require"] = ["env", "server", "logger", "context", "config", "inject"];

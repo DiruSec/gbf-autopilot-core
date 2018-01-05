@@ -1,34 +1,31 @@
 import {lua, lauxlib, lualib} from "fengari";
 import jslib from "fengari-interop";
-
-import config from "~/config";
 import Step from "../../Step";
 
-import createCodeRunner from "./createCodeRunner";
-import createGlobalVars from "./createGlobalVars";
-import setGlobalVars from "./setGlobalVars";
+exports = module.exports = (extension, require) => (scriptPath, setupScripts, mainScript) => {
+  const createGlobalVars = require("steps/Battle/Script/createGlobalVars");
+  const createCodeRunner = require("steps/Battle/Script/createCodeRunner");
+  const setGlobalVars = require("steps/Battle/Script/setGlobalVars");
 
-export default function(env, scriptPath, setupScripts, mainScript) {
-  return Step("Battle.Script", function(context, state, done, fail) {
-    const extension = config.getExtension(this.server);
-    const globalVars = createGlobalVars.call(this, context, state, {
-      env,
+  return Step("Battle", function Script(_, state, done, fail) {
+    const L = lauxlib.luaL_newstate();
+    lualib.luaL_openlibs(L);
+    lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
+
+    const executeCode = createCodeRunner(L);
+    const globalVars = createGlobalVars(state, {
       scriptPath,
       done, fail,
-      config: this.config
     });
     const runScript = (script) => {
       const escapedScriptPath = script.replace(/\\/g, "\\\\");
       executeCode(`dofile('${escapedScriptPath}')`);
     };
 
-    const L = lauxlib.luaL_newstate();
-    const executeCode = createCodeRunner(L, context);
-    lualib.luaL_openlibs(L);
-    lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
     setGlobalVars(L, globalVars);
-    
     (setupScripts || extension.scripts || []).forEach(runScript);
     runScript(mainScript || extension.mainScript);
   });
-}
+};
+
+exports["@require"] = ["extension", "require"];

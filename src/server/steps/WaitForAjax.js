@@ -1,6 +1,6 @@
 import Step from "./Step";
 
-exports = module.exports = function(server, regexp) {
+exports = module.exports = (server) => (regexp) => {
   return Step(function WaitForAjax(_, $, done, fail) {
     const subscription = server.getObservable("socket.broadcast")
       .filter(({name}) => name == "ajaxFinish")

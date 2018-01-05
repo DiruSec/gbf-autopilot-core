@@ -1,4 +1,4 @@
-import path from "path";
+import path from "canonical-path";
 import {name} from "../package.json";
 import TreasureEventPipeline from "~/server/pipelines/TreasureEvent";
 import EventPipeline from "~/server/pipelines/Event";

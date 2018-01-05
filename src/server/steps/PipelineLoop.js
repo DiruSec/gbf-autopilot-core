@@ -1,11 +1,11 @@
 import Step from "./Step";
 
-exports = module.exports = function PipelineLoop(env, manager, pipeline) {
+exports = module.exports = (process) => (pipeline) => {
   return Step(function PipelineLoop() {
-    return manager.process(pipeline());
+    return process(pipeline());
   }, {
     doNotTimeout: true
   });
 };
 
-exports["@require"] = ["env", "manager"];
+exports["@require"] = ["process"];

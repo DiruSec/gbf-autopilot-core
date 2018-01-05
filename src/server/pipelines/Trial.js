@@ -1,26 +1,26 @@
-import * as Battle from "~/server/steps/Battle";
-import * as Location from "~/server/steps/Location";
-import PipelineLoop from "~/server/steps/PipelineLoop";
+exports = module.exports = (logger, process, require) => {
+  const Location = require("steps/Location");
+  const Battle = require("steps/Battle");
 
-export default function TrialPipeline(env) {
-  return [
-    Location.Get(),
-    ({manager}, location) => {
+  const steps = [
+    Location.Get(), 
+    (_, location) => {
       const pipeline = [];
-
       if (location.hash.startsWith("#raid")) {
-        pipeline.push(Battle.Loop(env));
+        pipeline.push(Battle.Loop());
       } else {
-        this.logger.info("Waiting for trial battle page...");
+        logger.info("Waiting for trial battle page...");
         pipeline.push(Location.Wait("#raid"));
       }
-
-      pipeline.push(PipelineLoop.call(this, env, TrialPipeline));
-      return manager.process(pipeline);
+      pipeline.push(() => process(steps));
+      return process(pipeline);
     }
   ];
-}
-
-TrialPipeline.test = function() {
-  return this.config.Debug.TrialBattleMode; 
+  return steps;
 };
+
+exports.test = (config) => () => {
+  return config.Debug.TrialBattleMode; 
+};
+exports.test["@require"] = ["config"];
+exports["@require"] = ["env", "logger", "process", "inject"];

@@ -1,15 +1,16 @@
 import noop from "lodash/noop";
-import * as Click from "../Click";
-import * as Location from "../Location";
 import Step from "../Step";
 
-export default function(logger, run) {
+exports = module.exports = (logger, require) => () => {
+  const Click = require("steps/Click");
+  const Location = require("steps/Location");
+
   return Step("Support.StartBattle", (_, $, done, fail) => {
     logger.debug("Starting battle...");
 
     var hasChanged = false;
-    run(Click.Condition, ".btn-usual-ok", () => hasChanged).then(noop, fail);
-    run(Location.Wait).then(() => run(Location.Get)).then((location) => {
+    Click.Condition(".btn-usual-ok", () => hasChanged).then(noop, fail);
+    Location.Wait().then(Location.Get).then((location) => {
       if (location.hash.startsWith("#raid")) {
         return hasChanged = true;
       } else {
@@ -18,6 +19,6 @@ export default function(logger, run) {
     }, fail);
 
   });
-}
+};
 
-exports["@require"] = ["logger", "run"];
+exports["@require"] = ["logger", "require"];
