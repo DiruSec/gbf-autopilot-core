@@ -53,7 +53,6 @@ end
 function create_character(idx, chara)
   local skill_target = nil
   local character = {
-  
     WithWaitTime = function (self, time)
       run_processes({
         steps:Timeout(time)

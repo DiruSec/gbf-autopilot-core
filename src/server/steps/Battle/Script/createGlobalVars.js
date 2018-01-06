@@ -37,4 +37,4 @@ exports = module.exports = (env, server, logger, context, config, require) => (s
   });
 };
 
-exports["@require"] = ["env", "server", "logger", "context", "config", "inject"];
+exports["@require"] = ["env", "server", "logger", "context", "config", "require"];

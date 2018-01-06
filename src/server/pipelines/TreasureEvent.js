@@ -44,7 +44,7 @@ exports = module.exports = (env, config, coreConfig, process, require) => {
 };
 
 
-exports.test = (config) => () => {
+exports.test = (config) => {
   return config.TreasureEventMode.Enabled;
 };
 exports.test["@require"] = ["config"];

@@ -2,10 +2,10 @@ import forEach from "lodash/forEach";
 import values from "lodash/values";
 import Step from "../Step";
 
-exports = module.exports = (worker, require) => () => {
+exports = module.exports = (worker, require, run) => () => {
   const Viramate = require("steps/Viramate");
   return Step("Battle", async function State() {
-    const vmState = await Viramate({type: "getCombatState"});
+    const vmState = await run(Viramate({type: "getCombatState"}));
     const state = await worker.sendAction("battle.state");
     const count = await worker.sendAction("battle.count");
     const result = vmState;
@@ -20,4 +20,4 @@ exports = module.exports = (worker, require) => () => {
   });
 };
 
-exports["@require"] = ["worker", "require"];
+exports["@require"] = ["worker", "require", "run"];

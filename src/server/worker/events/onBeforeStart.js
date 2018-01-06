@@ -14,7 +14,7 @@ export default function(extension) {
       .register("extension", extension)
       .register("env", env);
 
-    var selectedPipeline = container.inject(extension.defaultPipeline);
+    var selectedPipeline; 
     forEach(extension.pipelines, (pipeline) => {
       if (typeof pipeline !== "function") {
         throw new Error("Pipeline must be a function!");
@@ -23,7 +23,7 @@ export default function(extension) {
       const passed = container.inject(pipeline.test || function() {
         const name = pipeline.name || "<anonymous>";
         throw new Error("Non-default pipeline '" + name + "' must implement a test function!");
-      })();
+      });
 
       if (passed) {
         selectedPipeline = container.inject(pipeline);
@@ -31,6 +31,6 @@ export default function(extension) {
       }
     });
 
-    env.pipeline = selectedPipeline();
+    env.pipeline = selectedPipeline || container.inject(extension.defaultPipeline);
   };
 }

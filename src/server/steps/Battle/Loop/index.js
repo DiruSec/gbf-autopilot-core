@@ -1,7 +1,7 @@
 import noop from "lodash/noop";
 import Step from "../../Step";
 
-exports = module.exports = (env, process, coreConfig, config, require) => (scriptPath, count) => {
+exports = module.exports = (env, process, coreConfig, config, require, run) => (scriptPath, count) => {
   const Wait = require("steps/Wait");
   const Check = require("steps/Check");
   const Click = require("steps/Click");
@@ -15,18 +15,18 @@ exports = module.exports = (env, process, coreConfig, config, require) => (scrip
   const CheckDimensionalHalo = require("steps/Battle/Loop/CheckDimensionalHalo");
 
   count = count || 0;
-  return Step("Battle", function Loop(_, $, done, fail) {
+  return Step("Battle", function Loop() {
     scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
 
     const checkAttackButton = (_, location) => {
       if (!location.hash.startsWith("#raid")) return false;
-      return Check(".btn-attack-start.display-on").then(() => [Combat.Attack()], noop);
+      return run(Check(".btn-attack-start.display-on")).then(() => [Combat.Attack()], noop);
     };
 
     const checkNextButton = CheckNextButton(() => {
       return process([
         RunScript(scriptPath),
-        Location.Get(),
+        Location(),
         checkAttackButton
       ]);
     }, (inBattle) => {
@@ -40,10 +40,10 @@ exports = module.exports = (env, process, coreConfig, config, require) => (scrip
       ]).then(() => false);
     });
 
-    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => Combat.Retreat());
+    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => run(Combat.Retreat()));
 
-    process([
-      Location.Get(),
+    return process([
+      Location(),
       CheckLocation(checkDimensionalHalo),
       function runSteps(context, steps) {
         if (!steps) return false;
@@ -51,10 +51,10 @@ exports = module.exports = (env, process, coreConfig, config, require) => (scrip
         steps.push(Loop(scriptPath, ++count));
         return process(steps);
       }
-    ]).then(done, fail);
+    ]);
   }, {
     doNotTimeout: true
   });
 };
 
-exports["@require"] = ["env", "process", "coreConfig", "config", "require"];
+exports["@require"] = ["env", "process", "coreConfig", "config", "require", "run"];

@@ -3,7 +3,7 @@ exports = module.exports = (logger, process, require) => {
   const Battle = require("steps/Battle");
 
   const steps = [
-    Location.Get(), 
+    Location(), 
     (_, location) => {
       const pipeline = [];
       if (location.hash.startsWith("#raid")) {
@@ -14,13 +14,14 @@ exports = module.exports = (logger, process, require) => {
       }
       pipeline.push(() => process(steps));
       return process(pipeline);
-    }
+    },
+    () => logger.debug("Somehow finished")
   ];
   return steps;
 };
 
-exports.test = (config) => () => {
+exports.test = (config) => {
   return config.Debug.TrialBattleMode; 
 };
 exports.test["@require"] = ["config"];
-exports["@require"] = ["env", "logger", "process", "inject"];
+exports["@require"] = ["logger", "process", "require"];

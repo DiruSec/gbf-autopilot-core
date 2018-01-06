@@ -2,15 +2,15 @@ import noop from "lodash/noop";
 import keyMap from "./keyMap";
 import Step from "../Step";
 
-exports = module.exports = (require, process, config) => (idx, state) => {
+exports = module.exports = (require, process, config, run) => (idx, state) => {
   const WaitForResult = require("steps/Combat/WaitForResult");
   const Timeout = require("steps/Timeout");
   const Key = require("steps/Key");
 
   return Step("Combat", function Summon(_, $, done, fail) {
     const doSummon = () => {
-      WaitForResult().then(() => {
-        return Timeout(config.Combat.MinWaitTimeInMsAfterSummon);
+      run(WaitForResult()).then(() => {
+        return run(Timeout(config.Combat.MinWaitTimeInMsAfterSummon));
       }).then(done, fail);
 
       process([
@@ -29,4 +29,4 @@ exports = module.exports = (require, process, config) => (idx, state) => {
   });
 };
 
-exports["@require"] = ["require", "process", "coreConfig"];
+exports["@require"] = ["require", "process", "coreConfig", "run"];

@@ -2,7 +2,7 @@ import isFunction from "lodash/isFunction";
 import isString from "lodash/isString";
 import Step from "../Step";
 
-exports = module.exports = (logger, config, require) => (selector, condition, delay) => {
+exports = module.exports = (logger, config, require, process, run) => (selector, condition, delay) => {
   if (!isFunction(condition) && !isString(condition)) {
     throw new Error("Condition parameter must be either a function or string!");
   }
@@ -22,7 +22,7 @@ exports = module.exports = (logger, config, require) => (selector, condition, de
     // if inversed, clicks until the expected element exists
     const selectorCondition = condition;
     condition = () => new Promise((resolve, reject) => {
-      Check(selectorCondition).then(
+      run(Check(selectorCondition)).then(
         !inversed ? reject : resolve,
         !inversed ? resolve : reject
       );
@@ -47,8 +47,8 @@ exports = module.exports = (logger, config, require) => (selector, condition, de
 
   return Step("Click", function Condition(_, $, done, fail) {
     logger.debug("Clicking with condition:", selector);
-    return startClick(done, fail);
+    startClick(done, fail);
   });
 };
 
-exports["@require"] = ["logger", "config", "require"];
+exports["@require"] = ["logger", "config", "require", "process", "run"];

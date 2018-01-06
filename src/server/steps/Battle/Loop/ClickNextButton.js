@@ -1,15 +1,16 @@
 import noop from "lodash/noop";
-import * as Location from "../../Location";
-import * as Click from "../../Click";
 import Step from "../../Step";
 
-exports = module.exports = function(process, run) {
+exports = module.exports = (process, require, run) => () => {
+  const Location = require("steps/Location");
+  const Click = require("steps/Click");
+
   return Step(function clickNextButton() {
     return new Promise((resolve, reject) => {
       var hasChanged = false;
-      run(Location.Wait, /(#raid|#result)/).then(() => {
+      run(Location.Wait(/(#raid|#result)/)).then(() => {
         hasChanged = true;
-        return run(Location.Get);
+        return run(Location());
       }).then((location) => {
         if (location.hash.startsWith("#raid")) {
           return true; // still in battle
@@ -18,9 +19,9 @@ exports = module.exports = function(process, run) {
         }
       }).then(resolve, reject);
 
-      run(Click.Condition, ".btn-result", () => hasChanged).then(noop, reject);
+      run(Click.Condition(".btn-result", () => hasChanged)).then(noop, reject);
     });
   });
 };
 
-exports["@require"] = ["process", "run"];
+exports["@require"] = ["process", "require", "run"];

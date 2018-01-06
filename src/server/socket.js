@@ -1,7 +1,7 @@
 const registerDebug = (server, hooks) => {
   hooks.forEach((hook) => {
     server.on("socket." + hook, ({data}) => {
-      if (!server.config.Debug.DebugSocket) return;
+      if (!server.config.Debug.LogSocket) return;
       server.logger.debug(hook, data);
     });
   });

@@ -6,7 +6,7 @@ exports = module.exports = (env, logger, process, require) => {
   const Location = require("steps/Location");
   const Battle = require("steps/Battle");
   const steps = [
-    Location.Get(),
+    Location(),
     (_, location) => {
       const pipeline = [];
 

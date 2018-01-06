@@ -11,7 +11,7 @@ function run_processes(processes)
   end
 
   local co = coroutine.running()
-  local promise = _context.manager:process(processesArray)
+  local promise = _context:process(processesArray)
   promise['then'](promise, function (self, result)
     coroutine.resume(co, result)
   end, function (self, err)

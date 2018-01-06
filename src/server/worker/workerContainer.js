@@ -1,6 +1,8 @@
 import path from "canonical-path";
 import forEach from "lodash/forEach";
+import toArray from "lodash/toArray";
 
+const injectTypes = ["object", "function"];
 export default class WorkerContainer {
   constructor(context) {
     this.context = context;
@@ -28,15 +30,17 @@ export default class WorkerContainer {
     return this;
   }
 
-  inject(object) {
-    const components = (object["@require"] || []).map((name) => {
+  inject() {
+    const args = toArray(arguments);
+    const object = args.shift();
+    const components = (object["@require"] || args).map((name) => {
       return this.resolve(name);
     });
     return object.apply(object, components);
   }
 
   process(steps) {
-    return this.context.process(steps);
+    return this.context.process(steps.slice());
   }
 
   run(step) {
@@ -54,14 +58,28 @@ export default class WorkerContainer {
       return this.components[id] = component;
     }
 
-    if (typeof obj !== "function" || !obj["@require"]) {
-      return obj;
+    const props = {};
+    Object.keys(obj).forEach((name) => {
+      if (name.startsWith("@")) return;
+      const value = obj[name];
+      if (injectTypes.indexOf(typeof value) >= 0) {
+        props[name] = this.require(value);
+      } else {
+        props[name] = value;
+      }
+    });
+
+    if (typeof obj === "function") {
+      if (obj["@require"]) {
+        obj = this.inject(obj);
+      } else {
+        obj = obj.bind(obj);
+      }
+      Object.assign(obj, props);
+    } else if (typeof obj === "object") {
+      obj = Object.assign({}, obj, props);
     }
 
-    obj = this.inject(obj);
-    Object.keys(obj).forEach((attr) => {
-      obj[attr] = this.require(obj[attr]);
-    });
     return obj;
   }
 }

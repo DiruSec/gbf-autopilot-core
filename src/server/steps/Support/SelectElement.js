@@ -15,15 +15,15 @@ const elementMap = {
   favorite: "f"
 };
 
-exports = module.exports = (require) => (element) => {
+exports = module.exports = (require, run) => (element) => {
   const Check = require("steps/Check");
   const Click = require("steps/Click");
   const elementSelector = elementPrefix + elementMap[element.toLowerCase()];
   return Step("Support", function SelectElement() {
-    return Check(elementSelector + ".unselected").then(() => {
-      return Click(elementSelector);
+    return run(Check(elementSelector + ".unselected")).then(() => {
+      return run(Click(elementSelector));
     }, noop);
   });
 };
 
-exports["@require"] = ["require"];
+exports["@require"] = ["require", "run"];

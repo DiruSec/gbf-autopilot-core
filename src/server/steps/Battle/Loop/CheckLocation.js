@@ -1,14 +1,14 @@
 import Step from "../../Step";
-import Wait from "../../Wait";
 
-exports = module.exports = function(process, next) {
+exports = module.exports = (process, require) => (next) => {
+  const Wait = require("steps/Wait");
   return Step(function checkLocation(_, location) {
     if (!location.hash.startsWith("#raid")) return false;
     return process([
-      [Wait, ".btn-attack-start.display-on,.btn-result,.cnt-result"],
+      Wait(".btn-attack-start.display-on,.btn-result,.cnt-result"),
       next
     ]);
   });
 };
 
-exports["@require"] = ["process"];
+exports["@require"] = ["process", "require"];

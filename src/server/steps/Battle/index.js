@@ -1,4 +1,6 @@
-export Supporter from "./Supporter";
-export Script from "./Script";
-export State from "./State";
-export Loop from "./Loop";
+module.exports = {
+  Supporter: require("./Supporter"),
+  Script: require("./Script"),
+  State: require("./State"),
+  Loop: require("./Loop"),
+};

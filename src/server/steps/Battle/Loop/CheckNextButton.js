@@ -1,13 +1,13 @@
-import Check from "../../Check";
 import Step from "../../Step";
-import ClickNextButton from "./ClickNextButton";
 
-exports = module.exports = function(run, next, stop) {
+exports = module.exports = (require, run) => (next, stop) => {
+  const Check = require("steps/Check");
+  const ClickNextButton = require("steps/Battle/Loop/ClickNextButton");
   return Step(function checkNextButton() {
-    return run(Check, ".btn-result").then(() => {
-      return run(ClickNextButton).then(stop);
+    return run(Check(".btn-result")).then(() => {
+      return run(ClickNextButton()).then(stop);
     }, next);
   });
 };
 
-exports["@require"] = ["run"];
+exports["@require"] = ["require", "run"];

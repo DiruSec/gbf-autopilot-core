@@ -2,7 +2,7 @@ import noop from "lodash/noop";
 import Step from "../Step";
 import keyMap from "./keyMap";
 
-exports = module.exports = (process, config, coreConfig, require) => (num, skillNum, target, state) => {
+exports = module.exports = (process, logger, config, coreConfig, require, run) => (num, skillNum, target, state) => {
   const Key = require("steps/Key");
   const Wait = require("steps/Wait");
   const Click = require("steps/Click");
@@ -10,12 +10,14 @@ exports = module.exports = (process, config, coreConfig, require) => (num, skill
   const WaitForResult = require("steps/Combat/WaitForResult");
 
   return Step("Combat", function UseSkill(_, $, done, fail) {
+    logger.debug("Use skill:", num, skillNum, target);
+
     const clickSkillTarget = async () => {
       const selector = ".pop-select-member .btn-command-character";
-      await Wait(selector);
-      await Timeout(coreConfig.popupDelay);
-      await Click(selector + "[pos='" + (target-1) + "']");
-      await Timeout(coreConfig.popupDelay);
+      await run(Wait(selector));
+      await run(Timeout(coreConfig.popupDelay));
+      await run(Click(selector + "[pos='" + (target-1) + "']"));
+      await run(Timeout(coreConfig.popupDelay));
     };
 
     const steps = [
@@ -26,8 +28,8 @@ exports = module.exports = (process, config, coreConfig, require) => (num, skill
     ];
 
     const doSkill = () => {
-      WaitForResult().then(() => {
-        return Timeout(config.Combat.MinWaitTimeInMsAfterAbility);
+      run(WaitForResult()).then(() => {
+        return run(Timeout(config.Combat.MinWaitTimeInMsAfterAbility));
       }).then(done, fail);
       process(steps).then(noop, fail);
     };
@@ -43,4 +45,4 @@ exports = module.exports = (process, config, coreConfig, require) => (num, skill
   });
 };
 
-exports["@require"] = ["process", "config", "coreConfig", "require"];
+exports["@require"] = ["process", "logger", "config", "coreConfig", "require", "run"];
