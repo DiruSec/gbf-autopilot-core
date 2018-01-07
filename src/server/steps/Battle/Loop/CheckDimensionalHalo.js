@@ -10,7 +10,7 @@ exports = module.exports = (config, require, run) => (next, stop) => {
     return run(State()).then((state) => {
       // Not non-transforming dimensional halo
       return state.enemies[0].id != 6005070 ? next() : stop();
-    });
+    }, next);
   });
 };
 

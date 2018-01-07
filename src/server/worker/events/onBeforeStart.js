@@ -20,12 +20,13 @@ export default function(extension) {
         throw new Error("Pipeline must be a function!");
       }
 
+      const name = pipeline["@name"] || pipeline.name || "<anonymous>";
       const passed = container.inject(pipeline.test || function() {
-        const name = pipeline["@name"] || pipeline.name || "<anonymous>";
         throw new Error("Non-default pipeline '" + name + "' must implement a test function!");
       }, "config");
 
       if (passed) {
+        context.logger.info("Using '" + name + "' mode.");
         selectedPipeline = container.inject(pipeline);
         return false;
       }

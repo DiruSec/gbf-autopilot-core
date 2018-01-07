@@ -36,17 +36,19 @@ const initScheduling = (env, server, process) => (pipeline) => {
 initScheduling["@require"] = ["env", "server", "process"];
 
 exports = module.exports = (env, inject, require, server, config, coreConfig) => () => {
-  if (!env.schedulingInit) {
-    const pipeline = require("pipelines/Default");
-    inject(initScheduling)(pipeline);
-  }
-
   const Battle = require("steps/Battle");
   const scriptPath = path.resolve(server.rootDir, config.CustomizedScheduling.SchedulingLuaScript);
   const mainScriptPath = path.resolve(coreConfig.scriptDir, "scheduling.lua");
 
   return [
-    Battle.Script(scriptPath, null, mainScriptPath)
+    () => {
+      if (!env.schedulingInit) {
+        const pipeline = require("pipelines/Default");
+        inject(initScheduling)(pipeline);
+      }
+    },
+    Battle.Script(scriptPath, null, mainScriptPath),
+    () => env.schedulingInit = false
   ];
 };
 
