@@ -1,12 +1,9 @@
 import assign from "lodash/assign";
-import forEach from "lodash/forEach";
 
-const wrap = (func) => {
-  return function() {
-    const args = [this.valueOf()];
-    forEach(arguments, (arg) => args.push(arg));
-    return func.apply(func, args);
-  };
+// TODO: make the wrap function reusable (eg: making helper library for Lua)
+const wrap = (func) => function(...args) {
+  args.unshift(this.valueOf());
+  return func.apply(func, args);
 };
 
 exports = module.exports = (env, server, logger, context, config, require) => (state, extras) => {
@@ -14,6 +11,8 @@ exports = module.exports = (env, server, logger, context, config, require) => (s
   const Combat = require("steps/Combat");
   const Timeout = require("steps/Timeout");
   const Stop = require("steps/Stop");
+  const Location = require("steps/Location");
+  const Wait = require("steps/Wait");
 
   return assign(env.scriptEnv, {
     vars: env.scriptVars,
@@ -30,7 +29,8 @@ exports = module.exports = (env, server, logger, context, config, require) => (s
       fail: extras.fail
     },
     steps: {
-      Battle, Combat, Timeout, Stop
+      Battle, Combat, Timeout, Stop,
+      Location, Wait
     },
 
     error_handler: wrap(::server.defaultErrorHandler),

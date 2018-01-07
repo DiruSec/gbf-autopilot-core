@@ -1,51 +1,55 @@
 import path from "canonical-path";
 import assign from "lodash/assign";
-import forEach from "lodash/forEach";
-import coreConfig from "~/config";
-import * as Battle from "~/server/steps/Battle";
-import DefaultPipeline from "./Default";
 
-function wrap(cb) {
-  return function() {
-    const args = [this.valueOf()];
-    forEach(arguments, (arg) => args.push(arg));
-    return cb.apply(cb, args);
-  };
-}
+const wrap = (func) => function(...args) {
+  args.unshift(this.valueOf());
+  return func.apply(func, args);
+};
 
-function initScheduling(env) {
-  const rootDir = this.rootDir;
+const initScheduling = (env, server, process) => (pipeline) => {
+  const rootDir = server.rootDir;
   assign(env.scriptEnv, {
     SetLuaScript: wrap((scriptPath) => {
       env.luaScript = path.resolve(rootDir, scriptPath);
+    }),
+    SetSummonPreferred: wrap((...summons) => {
+      env.summonPreferred = summons;
+    }),
+    SetSummonAttribute: wrap((element) => {
+      env.summonAttribute = element;
+    }),
+    SetPartyGroup: wrap((group) => {
+      env.partyGroup = group;
+    }),
+    SetPartyDeck: wrap((deck) => {
+      env.partyDeck = deck;
     }),
     _repeatQuest: wrap((questPage, ap, repeatCount) => {
       env.questCount = 0;
       env.questUrl = questPage;
       env.maxQuest = repeatCount;
-      return function({manager}) {
-        const pipeline = DefaultPipeline.call(this, env);
-        return manager.process(pipeline);
-      };
+      return () => process(pipeline());
     })
   });
   env.schedulingInit = true;
-}
+};
+initScheduling["@require"] = ["env", "server", "process"];
 
-export default function SchedulingPipeline(env) {
+exports = module.exports = (env, inject, require, server, config, coreConfig) => () => {
   if (!env.schedulingInit) {
-    initScheduling.call(this, env);
+    const pipeline = require("pipelines/Default");
+    inject(initScheduling)(pipeline);
   }
 
-  const config = this.config;
-  const scriptPath = path.resolve(this.rootDir, config.CustomizedScheduling.SchedulingLuaScript);
+  const Battle = require("steps/Battle");
+  const scriptPath = path.resolve(server.rootDir, config.CustomizedScheduling.SchedulingLuaScript);
   const mainScriptPath = path.resolve(coreConfig.scriptDir, "scheduling.lua");
 
   return [
-    Battle.Script(env, scriptPath, null, mainScriptPath)
+    Battle.Script(scriptPath, null, mainScriptPath)
   ];
-}
-
-SchedulingPipeline.test = function() {
-  return this.config.CustomizedScheduling.Enabled;
 };
+
+exports.test = (config) => config.CustomizedScheduling.Enabled;
+exports["@require"] = ["env", "inject", "require", "server", "config", "coreConfig"];
+exports["@name"] = "Scheduling";

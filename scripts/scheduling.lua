@@ -6,10 +6,14 @@ end
 
 co = coroutine.create(function ()
   logger:debug('Running script:', script.path)
-  local f = loadfile(script.path)
+  local result, err = loadfile(script.path)
 
-  f(nil)
-  logger:debug('asdf')
-  script:done(nil)
+  if result == nil then
+    logger:error(err)
+    script:fail(err)
+  else
+    result()
+    script:done()
+  end
 end)
 coroutine.resume(co)

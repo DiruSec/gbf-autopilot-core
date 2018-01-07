@@ -30,8 +30,7 @@ export default class WorkerContainer {
     return this;
   }
 
-  inject() {
-    const args = toArray(arguments);
+  inject(...args) {
     const object = args.shift();
     const components = (object["@require"] || args).map((name) => {
       return this.resolve(name);
@@ -39,12 +38,12 @@ export default class WorkerContainer {
     return object.apply(object, components);
   }
 
-  process(steps) {
-    return this.context.process(steps.slice());
+  process(steps, lastResult) {
+    return this.context.process(steps.slice(), lastResult);
   }
 
-  run(step) {
-    return this.context.run(step);
+  run(step, lastResult) {
+    return this.context.run(step, lastResult);
   }
 
   require(obj) {

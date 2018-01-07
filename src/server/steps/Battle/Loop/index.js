@@ -9,13 +9,14 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
   const Combat = require("steps/Combat");
   const Location = require("steps/Location");
 
+  const Loop = require("steps/Battle/Loop");
   const RunScript = require("steps/Battle/Loop/RunScript");
   const CheckLocation = require("steps/Battle/Loop/CheckLocation");
   const CheckNextButton = require("steps/Battle/Loop/CheckNextButton");
   const CheckDimensionalHalo = require("steps/Battle/Loop/CheckDimensionalHalo");
 
   count = count || 0;
-  return Step("Battle", function Loop() {
+  return Step("Battle.Loop", function() {
     scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
 
     const checkAttackButton = (_, location) => {
@@ -47,7 +48,6 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
       CheckLocation(checkDimensionalHalo),
       function runSteps(context, steps) {
         if (!steps) return false;
-        const Loop = require("steps/Battle/Loop");
         steps.push(Loop(scriptPath, ++count));
         return process(steps);
       }

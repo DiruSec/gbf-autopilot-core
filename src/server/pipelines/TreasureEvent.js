@@ -1,12 +1,12 @@
 import {URL} from "url";
 
-exports = module.exports = (env, config, coreConfig, process, require) => {
+exports = module.exports = (env, config, coreConfig, process, require) => () => {
   const Location = require("steps/Location");
   const CheckItem = require("steps/Quest/CheckItem");
   const DefaultPipeline = require("pipelines/Default");
 
   const treasureRequired = coreConfig.treasureRequired;
-  const url = new URL(config.TreasureEventMode.TreasureEventSoloUrl);
+  const url = new URL(config.TreasureEventMode.TreasureEventRaidUrl);
   const parts = url.hash.split("/");
   const itemId = parts[parts.length-1];
 
@@ -36,7 +36,7 @@ exports = module.exports = (env, config, coreConfig, process, require) => {
   const steps = [
     Location.Change(config.TreasureEventMode.TreasureEventUrl),
     checkQuest,
-    () => process(DefaultPipeline),
+    () => process(DefaultPipeline()),
     () => process(steps)
   ];
 
@@ -44,8 +44,6 @@ exports = module.exports = (env, config, coreConfig, process, require) => {
 };
 
 
-exports.test = (config) => {
-  return config.TreasureEventMode.Enabled;
-};
-exports.test["@require"] = ["config"];
+exports.test = (config) => config.TreasureEventMode.Enabled;
 exports["@require"] = ["env", "config", "coreConfig", "process", "require"];
+exports["@name"] = "TreasureEvent";

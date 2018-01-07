@@ -9,7 +9,11 @@ export default function Step(ns, callback, options) {
     ns = null;
   }
   options = options || {};
-  options.name = (ns ? ns + "." : "") + (callback.name || "<anonymous>");
+  if (!ns && !callback.name) {
+    options.name = "<anonymous>";
+  } else {
+    options.name = ns + (callback.name ? "." + callback.name : "");
+  }
 
   function process(context, lastResult) {
     return new Promise((resolve, reject) => {

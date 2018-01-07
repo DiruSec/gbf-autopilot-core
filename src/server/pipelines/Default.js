@@ -1,8 +1,9 @@
-exports = module.exports = (env, logger, process, require) => {
+exports = module.exports = (env, logger, process, require) => () => {
   if (!env.questCount) {
     env.questCount = 0;
   }
 
+  const OpenPage = require("steps/Quest/OpenPage");
   const Location = require("steps/Location");
   const Battle = require("steps/Battle");
   const steps = [
@@ -14,12 +15,14 @@ exports = module.exports = (env, logger, process, require) => {
         env.questCount++;
         pipeline.push(Battle.Loop());
       } else if (location.hash.startsWith("#quest/supporter")) {
-        env.questUrl = location.hash;
+        if (!env.questUrl) {
+          env.questUrl = location.href;
+        }
         pipeline.push(Battle.Supporter());
       } else {
         if (env.questUrl) {
-          logger.info("Using previous quest page:", env.questUrl);
-          pipeline.push(Location.Change(env.questUrl));
+          logger.info("Using quest page:", env.questUrl);
+          pipeline.push(OpenPage(env.questUrl));
         } else {
           logger.info("Waiting for supporter page...");
           pipeline.push(Location.Wait("#quest/supporter"));
@@ -38,4 +41,5 @@ exports = module.exports = (env, logger, process, require) => {
   return steps;
 };
 
-exports["@require"] = ["env", "logger", "process", "run"];
+exports["@require"] = ["env", "logger", "process", "require"];
+exports["@name"] = "Default";

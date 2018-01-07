@@ -1,6 +1,6 @@
 js = require 'js'
 
-function run_processes(processes)
+function run_processes(processes, lastResult)
   if not _running then
     return nil
   end
@@ -11,7 +11,7 @@ function run_processes(processes)
   end
 
   local co = coroutine.running()
-  local promise = _context:process(processesArray)
+  local promise = _context:process(processesArray, lastResult)
   promise['then'](promise, function (self, result)
     coroutine.resume(co, result)
   end, function (self, err)
@@ -22,4 +22,14 @@ end
 
 function Stop()
   run_processes({steps:Stop()})
+end
+
+function dofile(path)
+  local result, err = loadfile(path)
+  if result == nil then
+    logger:error(err)
+    script:fail(err)
+  else
+    result()
+  end
 end

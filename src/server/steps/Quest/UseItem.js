@@ -1,6 +1,6 @@
 import Step from "../Step";
 
-exports = module.exports = (worker, logger, require) => (item_id, num) => {
+exports = module.exports = (worker, logger, require, run) => (item_id, num) => {
   const Ajax = require("steps/Ajax");
 
   num = num || 1;
@@ -13,8 +13,8 @@ exports = module.exports = (worker, logger, require) => (item_id, num) => {
     }),
   };
   return Step("Quest", function UseItem() {
-    return Ajax(options);
+    return run(Ajax(options));
   });
 };
 
-exports["@require"] = ["worker", "logger", "require"];
+exports["@require"] = ["worker", "logger", "require", "run"];

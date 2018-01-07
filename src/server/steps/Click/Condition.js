@@ -1,16 +1,13 @@
-import isFunction from "lodash/isFunction";
 import isString from "lodash/isString";
 import Step from "../Step";
 
 exports = module.exports = (logger, config, require, process, run) => (selector, condition, delay) => {
-  if (!isFunction(condition) && !isString(condition)) {
-    throw new Error("Condition parameter must be either a function or string!");
-  }
   delay = delay || config.reclickDelay;
   const Check = require("steps/Check");
   const Click = require("steps/Click");
   const Timeout = require("steps/Timeout");
 
+  if (!condition) condition = selector;
   if (isString(condition)) {
     var inversed = false;
     if (condition.startsWith("!")) {
@@ -51,4 +48,4 @@ exports = module.exports = (logger, config, require, process, run) => (selector,
   });
 };
 
-exports["@require"] = ["logger", "config", "require", "process", "run"];
+exports["@require"] = ["logger", "coreConfig", "require", "process", "run"];

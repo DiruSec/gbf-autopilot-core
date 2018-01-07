@@ -10,11 +10,13 @@ exports = module.exports = (logger, require, run) => () => {
 
     var hasChanged = false;
     run(Click.Condition(".btn-usual-ok", () => hasChanged)).then(noop, fail);
-    run(Location.Wait()).then(() => run(Location)).then((location) => {
-      if (location.hash.startsWith("#raid")) {
-        return hasChanged = true;
+    run(Location.Wait()).then(() => {
+      return run(Location());
+    }).then((location) => {
+      if (location && location.hash.startsWith("#raid")) {
+        return done(hasChanged = true);
       } else {
-        throw "Unexpected page redirection: '" + location.hash + "'";
+        return fail(new Error("Unexpected page redirection: '" + location.hash + "'"));
       }
     }, fail);
 

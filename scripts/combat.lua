@@ -23,3 +23,11 @@ end
 function Retreat()
   run_processes({steps.Combat:Retreat()})
 end
+
+function Refresh()
+  run_processes({
+    steps.Location:Reload(),
+    steps:Timeout(3000),
+    steps:Wait('.btn-attack-start.display-on,.cnt-result')
+  })
+end

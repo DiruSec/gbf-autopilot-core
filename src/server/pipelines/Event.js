@@ -1,4 +1,4 @@
-exports = module.exports = (env, config, process, require) => {
+exports = module.exports = (env, config, process, require) => () => {
   const Wait = require("steps/Wait");
   const Check = require("steps/Check");
   const Location = require("steps/Location");
@@ -37,8 +37,6 @@ exports = module.exports = (env, config, process, require) => {
   return steps;
 };
 
-exports.test = (config) => {
-  return config.EventMode.Enabled;
-};
-exports.test["@require"] = ["config"];
+exports.test = (config) => config.EventMode.Enabled;
 exports["@require"] = ["env", "config", "process", "require"];
+exports["@name"] = "Event";

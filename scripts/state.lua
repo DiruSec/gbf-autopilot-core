@@ -38,5 +38,7 @@ function refresh_state()
   end
   if check_state(state) then
     update_state(state)
+  else
+    script:done()
   end
 end

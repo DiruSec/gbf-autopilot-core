@@ -11,7 +11,7 @@ exports = module.exports = (require, process, config, run) => (idx, state) => {
     const doSummon = () => {
       run(WaitForResult()).then(() => {
         return run(Timeout(config.Combat.MinWaitTimeInMsAfterSummon));
-      }).then(done, fail);
+      }).then(() => done(true), fail);
 
       process([
         Key.Press("5"), Timeout(config.keyDelay),

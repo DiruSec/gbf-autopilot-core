@@ -23,11 +23,12 @@ function update_character(idx, chara, character)
   character.is_alive = chara.alive
 
   character.HasStatusEffect = function (self, id)
+    id = tostring(id)
     for _, effectId in pairs(chara.buffs) do
-      if id == tonumber(effectId) then return true end
+      if id == effectId then return true end
     end
     for _, effectId in pairs(chara.debuffs) do
-      if id == tonumber(effectId) then return true end
+      if id == effectId then return true end
     end
     return false
   end
@@ -54,9 +55,12 @@ function create_character(idx, chara)
   local skill_target = nil
   local character = {
     WithWaitTime = function (self, time)
-      run_processes({
+      local result = run_processes({
         steps:Timeout(time)
-      })
+      }, true)
+      if result then
+        refresh_state()
+      end
       return self
     end,
   

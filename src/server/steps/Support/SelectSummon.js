@@ -7,12 +7,14 @@ exports = module.exports = (server, worker, logger, config, require, run) => (su
   }
   
   const Timeout = require("steps/Timeout");
-  return Step("Support.SelectSummon", async function() {
+  return Step("Support", function SelectSummon() {
     logger.debug("Preferred summons:", summons);
-    const payload = await worker.sendAction("support", summons);
-    logger.debug("Selected summon:", payload.summon);
-    await run(Timeout(config.scrollDelay));
-    return await server.makeRequest("click", payload);
+    return worker.sendAction("support", summons).then((payload) => {
+      logger.debug("Selected summon:", payload.summon);
+      return run(Timeout(config.scrollDelay), payload);
+    }).then((payload) => {
+      return server.makeRequest("click", payload);
+    });
   });
 };
 

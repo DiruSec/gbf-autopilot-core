@@ -10,8 +10,6 @@ exports = module.exports = (process, logger, config, coreConfig, require, run) =
   const WaitForResult = require("steps/Combat/WaitForResult");
 
   return Step("Combat", function UseSkill(_, $, done, fail) {
-    logger.debug("Use skill:", num, skillNum, target);
-
     const clickSkillTarget = async () => {
       const selector = ".pop-select-member .btn-command-character";
       await run(Wait(selector));
@@ -28,9 +26,10 @@ exports = module.exports = (process, logger, config, coreConfig, require, run) =
     ];
 
     const doSkill = () => {
+      logger.debug("Use skill:", num, skillNum, target);
       run(WaitForResult()).then(() => {
         return run(Timeout(config.Combat.MinWaitTimeInMsAfterAbility));
-      }).then(done, fail);
+      }).then(() => done(true), fail);
       process(steps).then(noop, fail);
     };
 

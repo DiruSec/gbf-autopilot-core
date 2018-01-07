@@ -1,4 +1,4 @@
-exports = module.exports = (logger, process, require) => {
+exports = module.exports = (logger, process, require) => () => {
   const Location = require("steps/Location");
   const Battle = require("steps/Battle");
 
@@ -20,8 +20,6 @@ exports = module.exports = (logger, process, require) => {
   return steps;
 };
 
-exports.test = (config) => {
-  return config.Debug.TrialBattleMode; 
-};
-exports.test["@require"] = ["config"];
+exports.test = (config) => config.Debug.TrialBattleMode;
 exports["@require"] = ["logger", "process", "require"];
+exports["@name"] = "Trial";

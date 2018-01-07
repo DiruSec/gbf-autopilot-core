@@ -20,6 +20,14 @@ function update_enemy(idx, boss, enemy)
   enemy.is_alive = boss.hp > 0
   enemy.overdrive_state = boss.mode == 2
   enemy.break_state = boss.mode == 3
+
+  enemy.HasStatusEffect = function (self, id)
+    id = tostring(id)
+    for _, effectId in pairs(boss.conditions) do
+      if id == effectId then return true end
+    end
+    return false
+  end
   set_enemy_by_index(idx, enemy)
 
   return enemy

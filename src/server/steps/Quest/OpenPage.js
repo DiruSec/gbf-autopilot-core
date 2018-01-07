@@ -1,7 +1,7 @@
 import {URL} from "url";
 import Step from "../Step";
 
-exports = module.exports = (require) => (url) => {
+exports = module.exports = (require, run) => (url) => {
   const CheckAP = require("steps/Quest/CheckAP");
   const Location = require("steps/Location");
   const Ajax = require("steps/Ajax");
@@ -19,10 +19,10 @@ exports = module.exports = (require) => (url) => {
     dataType: "json"
   };
   return Step("Quest", async function OpenPage() {
-    await CheckAP(url);
-    await Ajax(ajaxOptions);
-    return await require(Location.Change, url.toString());
+    await run(CheckAP(url));
+    await run(Ajax(ajaxOptions));
+    return await run(Location.Change(url.toString()));
   });
 };
 
-exports["@require"] = ["require"];
+exports["@require"] = ["require", "run"];
