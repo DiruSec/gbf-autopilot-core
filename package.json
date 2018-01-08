@@ -2,9 +2,11 @@
   "name": "gbf-autopilot-core",
   "version": "0.0.1",
   "description": "Core module for GBF Autopilot",
+  "repository": "github:Frizz925/gbf-autopilot-core",
   "main": "build/index.js",
   "scripts": {
-    "install": "gulp build"
+    "install": "gulp build",
+    "lint": "eslint src/**/*.js"
   },
   "author": "Frizz925 <Frizz925@hotmail.com>",
   "license": "MIT",
