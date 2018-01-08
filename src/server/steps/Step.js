@@ -2,7 +2,7 @@ import forEach from "lodash/forEach";
 import isFunction from "lodash/isFunction";
 import isUndefined from "lodash/isUndefined";
 
-export default function Step(ns, callback, options) {
+module.exports = function Step(ns, callback, options) {
   if (isFunction(ns)) {
     options = callback;
     callback = ns;
@@ -32,4 +32,4 @@ export default function Step(ns, callback, options) {
     Object.defineProperty(process, name, {value});
   });
   return process;
-}
+};

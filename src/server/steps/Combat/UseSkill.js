@@ -1,6 +1,7 @@
 import noop from "lodash/noop";
 import Step from "../Step";
 import keyMap from "./keyMap";
+import {enemyAlive} from "~/server/helpers/StateHelper";
 
 exports = module.exports = (process, logger, config, coreConfig, require, run) => (num, skillNum, target, state) => {
   const Key = require("steps/Key");
@@ -34,10 +35,15 @@ exports = module.exports = (process, logger, config, coreConfig, require, run) =
     };
 
     if (state) {
-      const chara = (state.party[num-1] || {});
-      const skill = (chara.skills || [])[skillNum-1];
-      const available = (skill || {}).available;
-      available ? doSkill() : done(false);
+      if (enemyAlive(state)) {
+        const chara = (state.party[num-1] || {});
+        const skill = (chara.skills || [])[skillNum-1];
+        const available = (skill || {}).available;
+        available ? doSkill() : done(false);
+      } else {
+        logger.debug("Enemies dead. Skipping skill.");
+        return done(false);
+      }
     } else {
       doSkill();
     }

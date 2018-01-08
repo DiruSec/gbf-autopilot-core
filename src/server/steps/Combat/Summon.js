@@ -1,8 +1,9 @@
 import noop from "lodash/noop";
 import keyMap from "./keyMap";
 import Step from "../Step";
+import {enemyAlive} from "~/server/helpers/StateHelper";
 
-exports = module.exports = (require, process, config, run) => (idx, state) => {
+exports = module.exports = (require, logger, process, config, run) => (idx, state) => {
   const WaitForResult = require("steps/Combat/WaitForResult");
   const Timeout = require("steps/Timeout");
   const Key = require("steps/Key");
@@ -21,12 +22,17 @@ exports = module.exports = (require, process, config, run) => (idx, state) => {
     };
 
     if (state) {
-      const summon = (state.summons[idx-1] || {});
-      summon.available ? doSummon() : done(false);
+      if (enemyAlive(state)) {
+        const summon = (state.summons[idx-1] || {});
+        summon.available ? doSummon() : done(false);
+      } else {
+        logger.debug("Enemies dead. Skipping summon.");
+        done(false);
+      }
     } else {
       doSummon();
     }
   });
 };
 
-exports["@require"] = ["require", "process", "coreConfig", "run"];
+exports["@require"] = ["require", "logger", "process", "coreConfig", "run"];
