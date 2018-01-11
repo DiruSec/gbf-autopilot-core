@@ -2,6 +2,7 @@ import path from "canonical-path";
 import {name} from "../package.json";
 import SchedulingPipeline from "~/server/pipelines/Scheduling";
 import SoloCoopPipeline from "~/server/pipelines/SoloCoop";
+import GuestCoopPipeline from "~/server/pipelines/GuestCoop";
 import TreasureEventPipeline from "~/server/pipelines/TreasureEvent";
 import EventPipeline from "~/server/pipelines/Event";
 import TrialPipeline from "~/server/pipelines/Trial";
@@ -24,6 +25,7 @@ export default {
     TrialPipeline,
     SchedulingPipeline,
     SoloCoopPipeline,
+    GuestCoopPipeline,
     TreasureEventPipeline,
     EventPipeline
   ],
