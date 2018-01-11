@@ -1,6 +1,5 @@
 import path from "canonical-path";
 import forEach from "lodash/forEach";
-import toArray from "lodash/toArray";
 
 const injectTypes = ["object", "function"];
 export default class WorkerContainer {
