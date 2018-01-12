@@ -19,9 +19,23 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
   return Step("Battle.Loop", function() {
     scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
 
+    const clickResultScreen = () => process([
+      Timeout(coreConfig.redirectDelay),
+      Wait(".cnt-result"),
+      Click(".btn-usual-ok"),
+      Timeout(coreConfig.redirectDelay)
+    ]).then(() => false);
+
     const checkAttackButton = (_, location) => {
-      if (!location.hash.startsWith("#raid")) return false;
-      return run(Check(".btn-attack-start.display-on")).then(() => [Combat.Attack()], noop);
+      if (location.hash.startsWith("#result")) {
+        return clickResultScreen();
+      } else if (location.hash.startsWith("#raid")) {
+        return run(Check(".btn-attack-start.display-on")).then(() => {
+          return run(Combat.Attack());
+        }, noop).then(() => true);
+      } else {
+        return false;
+      }
     };
 
     const checkNextButton = CheckNextButton(() => {
@@ -31,25 +45,23 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
         checkAttackButton
       ]);
     }, (inBattle) => {
-      return inBattle ? [
-        Timeout(coreConfig.redirectDelay),
-      ] : process([
-        Timeout(coreConfig.redirectDelay),
-        Wait(".cnt-result"),
-        Click(".btn-usual-ok"),
-        Timeout(coreConfig.redirectDelay)
-      ]).then(() => false);
+      if (inBattle) {
+        return run(Timeout(coreConfig.redirectDelay)).then(() => true);
+      } else {
+        return clickResultScreen();
+      }
     });
 
-    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => run(Combat.Retreat()));
+    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => {
+      return run(Combat.Retreat()).then(() => false);
+    });
 
     return process([
       Location(),
       CheckLocation(checkDimensionalHalo),
-      function runSteps(context, steps) {
-        if (!steps) return false;
-        steps.push(Loop(scriptPath, ++count));
-        return process(steps);
+      function runSteps(context, inBattle) {
+        if (!inBattle) return false;
+        return run(Loop(scriptPath, ++count));
       }
     ]);
   }, {

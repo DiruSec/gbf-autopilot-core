@@ -30,7 +30,7 @@ exports = module.exports = (env, logger, process, require) => () => {
       }
 
       pipeline.push(() => {
-        if (!env.maxQuest || env.questCount < env.maxQuest) {
+        if (!env.questMax || env.questCount < env.questMax) {
           return process(steps);
         }
         return true;

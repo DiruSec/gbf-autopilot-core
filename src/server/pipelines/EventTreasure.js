@@ -6,25 +6,25 @@ exports = module.exports = (env, config, coreConfig, process, require) => () => 
   const DefaultPipeline = require("pipelines/Default");
 
   const treasureRequired = coreConfig.treasureRequired;
-  const url = new URL(config.TreasureEventMode.TreasureEventRaidUrl);
+  const url = new URL(config.EventTreasureMode.EventTreasureRaidUrl);
   const parts = url.hash.split("/");
   const itemId = parts[parts.length-1];
 
   const treasureSoloMode = () => {
-    env.questUrl = config.TreasureEventMode.TreasureEventSoloUrl;
-    env.luaScript = config.TreasureEventMode.TreasureEventSoloModeScript;
+    env.questUrl = config.EventTreasureMode.EventTreasureSoloUrl;
+    env.luaScript = config.EventTreasureMode.EventTreasureSoloModeScript;
   };
 
   const treasureRaidMode = () => {
-    env.questUrl = config.TreasureEventMode.TreasureEventRaidUrl;
-    env.luaScript = config.TreasureEventMode.TreasureEventRaidModeScript;
+    env.questUrl = config.EventTreasureMode.EventTreasureRaidUrl;
+    env.luaScript = config.EventTreasureMode.EventTreasureRaidModeScript;
   };
 
   const checkTreasure = (context, count) => {
-    config.TreasureEventMode.TreasureEventRaidUrl && count >= treasureRequired ?
+    config.EventTreasureMode.EventTreasureRaidUrl && count >= treasureRequired ?
       treasureRaidMode() : treasureSoloMode();
     env.questCount = 0;
-    env.maxQuest = 1;
+    env.questMax = 1;
     return true;
   };
 
@@ -34,7 +34,7 @@ exports = module.exports = (env, config, coreConfig, process, require) => () => 
   ]);
 
   const steps = [
-    Location.Change(config.TreasureEventMode.TreasureEventUrl),
+    Location.Change(config.EventTreasureMode.EventTreasureUrl),
     checkQuest,
     () => process(DefaultPipeline()),
     () => process(steps)
@@ -44,6 +44,6 @@ exports = module.exports = (env, config, coreConfig, process, require) => () => 
 };
 
 
-exports.test = (config) => config.TreasureEventMode.Enabled;
+exports.test = (config) => config.EventTreasureMode.Enabled;
 exports["@require"] = ["env", "config", "coreConfig", "process", "require"];
-exports["@name"] = "TreasureEvent";
+exports["@name"] = "Event Treasure";

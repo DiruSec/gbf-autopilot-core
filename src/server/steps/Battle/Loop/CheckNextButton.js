@@ -9,6 +9,33 @@ exports = module.exports = (require, run, process) => (next, stop) => {
   const ClickNextButton = require("steps/Battle/Loop/ClickNextButton");
   const CheckNextLocation = require("steps/Battle/Loop/CheckNextLocation");
 
+  const waitForLocationOrNextButton = () => new Promise((resolve, reject) => {
+    // We have 2 checkers running in parallel: location and DOM.
+    // If the location checker gets triggered first, 
+    // tells the DOM checker to ignore any resolved promise.
+    var waiting = true;
+    process([
+      Location.Wait(),
+      CheckNextLocation(),
+      async (_, inBattle) => {
+        waiting = false;
+        if (!inBattle) return {inBattle};
+        await run(Wait(".btn-attack-start.display-on,.btn-result,.cnt-result"));
+        try {
+          await run(Check(".btn-result"));
+          return {inBattle, hasNextButton: true};
+        } catch (e) {
+          return {inBattle, hasNextButton: false};
+        }
+      }
+    ]).then(resolve, reject);
+
+    run(Wait(".btn-result")).then(() => {
+      if (!waiting) return;
+      resolve({inBattle: true, hasNextButton: true});
+    });
+  });
+
   return Step(function checkNextButton() {
     return run(State()).then((state) => {
       // check if there's still enemy left
@@ -17,37 +44,10 @@ exports = module.exports = (require, run, process) => (next, stop) => {
       // EDIT: in cases of refreshes, it may instead redirect to the next battle or result page
       if (enemyAlive(state)) {
         return run(Check(".btn-result"));
+      } else {
+        return waitForLocationOrNextButton();
       }
 
-      return new Promise((resolve, reject) => {
-        // We have 2 checkers running in parallel: location and DOM.
-        // If the location checker gets triggered first, 
-        // tells the DOM checker to ignore any resolved promise.
-        var waiting = true;
-        process([
-          Location.Wait(),
-          CheckNextLocation(),
-          async (_, inBattle) => {
-            waiting = false;
-            if (!inBattle) return {inBattle};
-            await run(Wait(".btn-attack-start.display-on,.btn-result,.cnt-result"));
-            try {
-              await run(Check(".btn-result"));
-              return {inBattle, hasNextButton: true};
-            } catch (e) {
-              return {inBattle, hasNextButton: false};
-            }
-          }
-        ]).then(resolve, reject);
-
-        run(Wait(".btn-result")).then(() => {
-          if (!waiting) return;
-          resolve({
-            inBattle: true,
-            hasNextButton: true
-          });
-        });
-      });
     }, () => stop(false)).then((condition) => {
       if (condition.inBattle) {
         return condition.hasNextButton ? run(ClickNextButton()).then(stop) : next();

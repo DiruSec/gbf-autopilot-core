@@ -27,7 +27,7 @@ const initScheduling = (env, server, process) => (pipeline) => {
     _repeatQuest: wrap((questPage, ap, repeatCount) => {
       env.questCount = 0;
       env.questUrl = questPage;
-      env.maxQuest = repeatCount;
+      env.questMax = repeatCount;
       return () => process(pipeline());
     })
   });
@@ -37,7 +37,7 @@ initScheduling["@require"] = ["env", "server", "process"];
 
 exports = module.exports = (env, inject, require, server, config, coreConfig) => () => {
   const Battle = require("steps/Battle");
-  const scriptPath = path.resolve(server.rootDir, config.CustomizedScheduling.SchedulingLuaScript);
+  const scriptPath = env.schedulingLuaScript || path.resolve(server.rootDir, config.CustomizedScheduling.SchedulingLuaScript);
   const mainScriptPath = path.resolve(coreConfig.scriptDir, "scheduling.lua");
 
   return [
@@ -47,8 +47,7 @@ exports = module.exports = (env, inject, require, server, config, coreConfig) =>
         inject(initScheduling)(pipeline);
       }
     },
-    Battle.Script(scriptPath, null, mainScriptPath),
-    () => env.schedulingInit = false
+    Battle.Script(scriptPath, null, mainScriptPath)
   ];
 };
 

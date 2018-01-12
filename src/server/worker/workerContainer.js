@@ -18,6 +18,7 @@ export default class WorkerContainer {
     this.register("require", ::this.require);
     this.register("process", ::this.process);
     this.register("run", ::this.run);
+    this.register("path", path);
   }
 
   resolve(name) {

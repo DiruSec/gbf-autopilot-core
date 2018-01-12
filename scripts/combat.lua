@@ -31,3 +31,7 @@ function Refresh()
     steps:Wait('.btn-attack-start.display-on,.cnt-result')
   })
 end
+
+function Attack()
+  run_processes({steps.Combat:Attack()})
+end

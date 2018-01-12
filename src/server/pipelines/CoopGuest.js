@@ -17,11 +17,11 @@ exports = module.exports = (require, config, run, process) => () => {
     saveCoopRoomUrl,
     waitForStartButton,
     Wait(".btn-attack-start"),
-    Battle.Loop(config.GuestCoopMode.LuaScript),
+    Battle.Loop(config.CoopGuestMode.LuaScript),
     () => process(steps)
   ];
   return steps;
 };
-exports.test = (config) => config.GuestCoopMode.Enabled;
+exports.test = (config) => config.CoopGuestMode.Enabled;
 exports["@require"] = ["require", "config", "run", "process"];
-exports["@name"] = "GuestCoop";
+exports["@name"] = "Coop Guest";

@@ -41,13 +41,13 @@ exports = module.exports = (env, require, run, process, logger, config) => () =>
     checkStartButton,
     checkAP,
     clickStartButton,
-    Battle.Loop(config.SoloCoopMode.LuaScript),
+    Battle.Loop(config.CoopSoloMode.LuaScript),
     () => run(Location.Change(env.coopRoomUrl)), // need to do this since the url may not have been set yet
     () => process(steps)
   ];
   return steps;
 };
 
-exports.test = (config) => config.SoloCoopMode.Enabled;
+exports.test = (config) => config.CoopSoloMode.Enabled;
 exports["@require"] = ["env", "require", "run", "process", "logger", "config"];
-exports["@name"] = "SoloCoop";
+exports["@name"] = "Coop Solo";
