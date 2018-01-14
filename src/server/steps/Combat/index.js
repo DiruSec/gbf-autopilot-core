@@ -5,3 +5,4 @@ export Retreat from "./Retreat";
 export Summon from "./Summon";
 export Attack from "./Attack";
 export keyMap from "./keyMap";
+export SelectTarget from "./SelectTarget";

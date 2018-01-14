@@ -2,8 +2,18 @@ import noop from "lodash/noop";
 import Step from "../Step";
 
 exports = module.exports = (logger, require, run) => () => {
+  const Wait = require("steps/Wait");
+  const Check = require("steps/Check");
   const Click = require("steps/Click");
   const Location = require("steps/Location");
+
+  const checkPopup = (done, fail) => {
+    return run(Wait(".btn-attack-start,.btn-usual-ok")).then(() => {
+      return run(Check(".btn-usual-ok")).then(() => {
+        return run(Click.Condition(".btn-usual-ok"));
+      }, noop);
+    }).then(() => done(true), fail);
+  };
 
   return Step("Support", function StartBattle(_, $, done, fail) {
     logger.debug("Starting battle...");
@@ -13,10 +23,17 @@ exports = module.exports = (logger, require, run) => () => {
     run(Location.Wait()).then(() => {
       return run(Location());
     }).then((location) => {
-      if (location && location.hash.startsWith("#raid")) {
-        return done(hasChanged = true);
+      hasChanged = true;
+      if (location) {
+        if (location.hash.startsWith("#raid")) {
+          return done(true);
+        } else if (location.hash.startsWith("#quest")) {
+          return checkPopup(done, fail);
+        } else {
+          return fail(new Error("Unexpected page redirection: '" + location.hash + "'"));
+        }
       } else {
-        return fail(new Error("Unexpected page redirection: '" + location.hash + "'"));
+        return fail(new Error("Can't fetch the location"));
       }
     }, fail);
 

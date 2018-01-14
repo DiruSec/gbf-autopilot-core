@@ -2,7 +2,7 @@ import {URL} from "url";
 import isString from "lodash/isString";
 import Step from "../Step";
 
-exports = module.exports = (manager, env, require, run) => (options, num) => {
+exports = module.exports = (manager, env, config, require, run, logger) => (options, num) => {
   num = num || 1;
 
   var questId, type;
@@ -18,17 +18,24 @@ exports = module.exports = (manager, env, require, run) => (options, num) => {
     throw new Error("Options paramater must be either string or object with questId and type, or url");
   }
   const Ajax = require("steps/Ajax");
+  const Stop = require("steps/Stop");
   const RefillAP = require("steps/Quest/RefillAP");
 
   return Step("Battle", async function CheckAP() {
     const user = await run(Ajax("/quest/user_action_point"));
     const quest = await run(Ajax("/quest/quest_data/" + questId + "/" + type));
+    const potMax = env.potMax || config.General.MaxNumPotionsToUse || -1;
     if (quest.action_point > user.action_point) {
-      return await run(RefillAP(num));
+      if (potMax > -1 && env.potUsed >= potMax) {
+        logger.info("Reaching maximum pot spent. Stopping...");
+        return await run(Stop());
+      } else {
+        return await run(RefillAP(num));
+      }
     } else {
       return null;
     }
   });
 };
 
-exports["@require"] = ["manager", "env", "require", "run"];
+exports["@require"] = ["manager", "env", "config", "require", "run", "logger"];

@@ -35,3 +35,7 @@ end
 function Attack()
   run_processes({steps.Combat:Attack()})
 end
+
+function SelectTarget(target)
+  run_processes({steps.Combat:SelectTarget(target)})
+end
