@@ -1,4 +1,4 @@
-exports = module.exports = (env, config, process, require) => () => {
+exports = module.exports = (env, config, process, require, run) => () => {
   const Wait = require("steps/Wait");
   const Check = require("steps/Check");
   const Location = require("steps/Location");
@@ -28,9 +28,9 @@ exports = module.exports = (env, config, process, require) => () => {
         return eventMode();
       }
       const selector = ".ico-difficulty-5,.ico-difficulty-8";
-      return Check(selector).then(nightmareMode, eventMode);
+      return run(Check(selector)).then(nightmareMode, eventMode);
     },
-    () => process(DefaultPipeline),
+    () => process(DefaultPipeline()),
     () => process(steps)
   ];
 
@@ -38,5 +38,5 @@ exports = module.exports = (env, config, process, require) => () => {
 };
 
 exports.test = (config) => config.EventMode.Enabled;
-exports["@require"] = ["env", "config", "process", "require"];
+exports["@require"] = ["env", "config", "process", "require", "run"];
 exports["@name"] = "Event";
