@@ -17,7 +17,7 @@ function DisableChargeAttack()
 end
 
 function Wait(time)
-  run_processes({steps.Timeout(time)})
+  run_processes({steps:Timeout(time)})
 end
 
 function Retreat()
