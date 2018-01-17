@@ -7,11 +7,17 @@ exports = module.exports = (logger, require, run) => () => {
   const Click = require("steps/Click");
   const Location = require("steps/Location");
 
+  const clickPopup = (done, fail) => {
+    return run(Check(".pop-skip-result")).then(() => {
+      return run(Click.Condition(".btn-usual-ok")).then(() => {
+        return run(Wait(".btn-attack-start"));
+      }).then(done, fail);
+    }, done);
+  };
+
   const checkPopup = (done, fail) => {
-    return run(Wait(".btn-attack-start,.btn-usual-ok")).then(() => {
-      return run(Check(".btn-usual-ok")).then(() => {
-        return run(Click.Condition(".btn-usual-ok"));
-      }, noop);
+    return run(Wait(".btn-attack-start,.pop-skip-result")).then(() => {
+      return clickPopup(noop, fail);
     }).then(() => done(true), fail);
   };
 
@@ -27,7 +33,7 @@ exports = module.exports = (logger, require, run) => () => {
       if (location) {
         if (location.hash.startsWith("#raid")) {
           return done(true);
-        } else if (location.hash.startsWith("#quest")) {
+        } else if (location.hash.startsWith("#quest/stage")) {
           return checkPopup(done, fail);
         } else {
           return fail(new Error("Unexpected page redirection: '" + location.hash + "'"));

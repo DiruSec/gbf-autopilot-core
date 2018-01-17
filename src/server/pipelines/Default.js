@@ -10,11 +10,12 @@ exports = module.exports = (env, logger, process, require) => () => {
     Location(),
     (_, location) => {
       const pipeline = [];
+      const supporterRegexp = /#(.+)\/supporter\//;
 
       if (location.hash.startsWith("#raid")) {
         env.questCount++;
         pipeline.push(Battle.Loop());
-      } else if (location.hash.startsWith("#quest/supporter")) {
+      } else if (location.hash.match(supporterRegexp)) {
         if (!env.questUrl) {
           env.questUrl = location.href;
         }
@@ -25,7 +26,7 @@ exports = module.exports = (env, logger, process, require) => () => {
           pipeline.push(OpenPage(env.questUrl));
         } else {
           logger.info("Waiting for supporter page...");
-          pipeline.push(Location.Wait("#quest/supporter"));
+          pipeline.push(Location.Wait(supporterRegexp));
         }
       }
 

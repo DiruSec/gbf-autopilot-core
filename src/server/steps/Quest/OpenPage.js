@@ -22,9 +22,14 @@ exports = module.exports = (env, require, run, config, logger) => (url) => {
   };
   return Step("Quest", async function OpenPage() {
     const treasureId = env.treasureId || config.General.TreasureId;
+    const treasureName = env.treasureName || config.General.TreasureName;
     const treasureTarget = env.treasureTarget || Number(config.General.TreasureTarget);
-    if (treasureId && treasureTarget > 0) {
-      const treasureCount = await run(CheckItem(treasureId));
+    if ((treasureId || treasureName) && treasureTarget > 0) {
+      const options = {
+        id: treasureId,
+        name: treasureName
+      };
+      const treasureCount = await run(CheckItem(options));
       if (treasureCount >= treasureTarget) {
         logger.info("Treasure target reached. Stopping...");
         return await run(Stop());
