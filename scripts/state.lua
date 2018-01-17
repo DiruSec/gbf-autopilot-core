@@ -28,7 +28,11 @@ function check_state(state)
   return enemy_alive > 0
 end
 
-function refresh_state()
+function refresh_state(success)
+  if success ~= true then
+    return
+  end
+
   local state, err = run_processes({
     steps.Battle:State(nil)
   })

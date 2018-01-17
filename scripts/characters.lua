@@ -55,28 +55,31 @@ function create_character(idx, chara)
   local skill_target = nil
   local character = {
     WithWaitTime = function (self, time)
-      local result = run_processes({
+      refresh_state(run_processes({
         steps:Timeout(time)
-      }, true)
-      if result then
-        refresh_state()
-      end
+      }, true))
       return self
     end,
   
     UseSkill = function (self, skill_idx)
-      local result = run_processes({
+      refresh_state(run_processes({
         steps.Combat:UseSkill(idx, skill_idx, skill_target, _state)
-      })
-      if result then 
-        skill_target = nil
-        refresh_state()
-      end
+      }))
       return self
     end,
 
     OnPartyMember = function (self, member)
       skill_target = member
+      return self
+    end,
+
+    UseGreenPotion = function (self)
+      UseGreenPotionOnPartyMember(idx)
+      return self
+    end,
+
+    UseClarityHerb = function (self)
+      UseClarityHerbOnPartyMember(idx)
       return self
     end
   }
