@@ -1,6 +1,6 @@
 import Step from "../Step";
 
-exports = module.exports = function(require, run) {
+exports = module.exports = (require, run) => () => {
   const WaitForAjax = require("steps/WaitForAjax");
   const Location = require("steps/Location");
   const Click = require("steps/Click");

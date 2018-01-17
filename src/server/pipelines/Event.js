@@ -5,8 +5,15 @@ exports = module.exports = (env, config, process, require, run) => () => {
   const DefaultPipeline = require("pipelines/Default");
 
   const eventMode = () => {
+    delete env.summonPreferred;
+    delete env.summonAttribute;
+    delete env.partyGroup;
+    delete env.partyDeck;
+
     env.questUrl = config.EventMode.EventRaidUrl;
     env.luaString = config.EventMode.EventRaidScript;
+    env.questCount = 0;
+    env.questMax = 1;
     return env;
   };
 
@@ -17,6 +24,8 @@ exports = module.exports = (env, config, process, require, run) => () => {
     env.summonAttribute = config.EventMode.NightmareModeSummonAttributeTab;
     env.partyGroup = Number(config.PartySelection.PreferredNightmareModePartyGroup);
     env.partyDeck = Number(config.PartySelection.PreferredNightmareModePartyDeck);
+    env.questCount = 0;
+    env.questMax = 1;
     return env;
   };
 
