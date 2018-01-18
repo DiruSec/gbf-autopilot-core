@@ -11,7 +11,7 @@ exports = module.exports = (env, config, process, require, run) => () => {
     delete env.partyDeck;
 
     env.questUrl = config.EventMode.EventRaidUrl;
-    env.luaString = config.EventMode.EventRaidScript;
+    env.luaScript = config.EventMode.EventRaidScript;
     env.questCount = 0;
     env.questMax = 1;
     return env;
@@ -19,7 +19,7 @@ exports = module.exports = (env, config, process, require, run) => () => {
 
   const nightmareMode = () => {
     env.questUrl = config.EventMode.NightmareModeUrl;
-    env.luaString = config.EventTreasureMode.EventTreasureModeScript;
+    env.luaScript = config.EventTreasureMode.EventTreasureModeScript;
     env.summonPreferred = config.EventMode.NightmareModePreferredSummons;
     env.summonAttribute = config.EventMode.NightmareModeSummonAttributeTab;
     env.partyGroup = Number(config.PartySelection.PreferredNightmareModePartyGroup);
