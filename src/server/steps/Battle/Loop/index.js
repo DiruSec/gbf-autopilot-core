@@ -15,6 +15,8 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
   const CheckNextButton = require("steps/Battle/Loop/CheckNextButton");
   const CheckDimensionalHalo = require("steps/Battle/Loop/CheckDimensionalHalo");
 
+  const useAuto = Boolean(env.useAuto || config.Combat.UseAuto);
+
   count = count || 0;
   return Step("Battle.Loop", function() {
     scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
@@ -31,16 +33,22 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
         return clickResultScreen();
       } else if (location.hash.startsWith("#raid")) {
         return run(Check(".btn-attack-start.display-on")).then(() => {
-          return run(Combat.Attack());
+          return run(Combat.Attack(useAuto));
         }, noop).then(() => true);
       } else {
         return false;
       }
     };
 
-    const checkNextButton = CheckNextButton(() => {
+    const runScript = () => {
       return process([
         RunScript(scriptPath),
+      ]);
+    };
+
+    const checkNextButton = CheckNextButton(() => {
+      return process([
+        runScript,
         Location(),
         checkAttackButton
       ]);
