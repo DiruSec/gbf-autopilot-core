@@ -9,6 +9,7 @@ function update_state(state)
   apply_global_vars(state)
   update_characters(state)
   update_enemies(state)
+  logger:debug('State updated')
 end
 
 function init_state(state)
@@ -16,6 +17,7 @@ function init_state(state)
   apply_global_vars(state)
   init_characters(state)
   init_enemies(state)
+  logger:debug('State initialized')
 end
 
 function check_state(state)

@@ -21,14 +21,15 @@ exports = module.exports = (env, require, run, config, logger) => (url) => {
     dataType: "json"
   };
   return Step("Quest", async function OpenPage() {
-    const treasureId = env.treasureId || config.General.TreasureId;
-    const treasureName = env.treasureName || config.General.TreasureName;
+    const treasure = env.treasure;
     const treasureTarget = env.treasureTarget || Number(config.General.TreasureTarget);
-    if ((treasureId || treasureName) && treasureTarget > 0) {
-      const options = {
-        id: treasureId,
-        name: treasureName
-      };
+    if (treasure && treasureTarget > 0) {
+      const options = {};
+      if (!isNaN(treasure)) {
+        options.id = Number(treasure);
+      } else {
+        options.name = treasure;
+      }
       const treasureCount = await run(CheckItem(options));
       if (treasureCount >= treasureTarget) {
         logger.info("Treasure target reached. Stopping...");

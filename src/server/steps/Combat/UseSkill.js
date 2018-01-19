@@ -7,6 +7,7 @@ exports = module.exports = (process, logger, config, coreConfig, require, run) =
   const Key = require("steps/Key");
   const Wait = require("steps/Wait");
   const Click = require("steps/Click");
+  const Location = require("steps/Location");
   const Timeout = require("steps/Timeout");
   const WaitForResult = require("steps/Combat/WaitForResult");
 
@@ -37,6 +38,7 @@ exports = module.exports = (process, logger, config, coreConfig, require, run) =
 
     const doSkill = () => {
       logger.debug("Use skill:", num, skillNum, target);
+      run(Location.Wait()).then(finishAction);
       run(WaitForResult()).then(finishAction);
       process(steps).then(() => {
         return run(Wait(".pop-usual"));
