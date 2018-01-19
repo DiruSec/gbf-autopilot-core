@@ -2,20 +2,32 @@ import noop from "lodash/noop";
 import Step from "../Step";
 import {enemyAlive} from "~/server/helpers/StateHelper";
 
-exports = module.exports = (logger, config, require, run) => () => {
+exports = module.exports = (logger, config, require, run, process) => (useAuto) => {
+  const Wait = require("steps/Wait");
   const Click = require("steps/Click");
   const Check = require("steps/Check");
   const Timeout = require("steps/Timeout");
   const State = require("steps/Battle/State");
   const WaitForResult = require("steps/Combat/WaitForResult");
 
+  const checkAutoAttack = async () => {
+    const state = await run(State());
+    return state.auto_attack;
+  };
+
   const doAttackAndWait = () => {
     return new Promise((resolve, reject) => {
-      logger.info("Attacking...");
+      logger.info(useAuto ? "Auto-attacking..." : "Attacking...");
       run(WaitForResult()).then(() => {
         return run(Timeout(config.Combat.MinWaitTimeInMsAfterAttack));
       }).then(resolve, reject);
-      run(Click.Condition(".btn-attack-start.display-on")).then(noop, reject);
+      process([
+        Click.Condition(".btn-attack-start.display-on"),
+        () => useAuto ? process([
+          Wait(".btn-auto"),
+          Click.Condition(".btn-auto", checkAutoAttack)
+        ]) : null
+      ]).then(noop, reject);
     });
   };
 
@@ -39,4 +51,4 @@ exports = module.exports = (logger, config, require, run) => () => {
   });
 };
 
-exports["@require"] = ["logger", "config", "require", "run"];
+exports["@require"] = ["logger", "config", "require", "run", "process"];
