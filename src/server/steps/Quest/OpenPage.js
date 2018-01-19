@@ -21,7 +21,7 @@ exports = module.exports = (env, require, run, config, logger) => (url) => {
     dataType: "json"
   };
   return Step("Quest", async function OpenPage() {
-    const treasure = env.treasure;
+    const treasure = env.treasure || config.General.Treasure;
     const treasureTarget = env.treasureTarget || Number(config.General.TreasureTarget);
     if (treasure && treasureTarget > 0) {
       const options = {};
