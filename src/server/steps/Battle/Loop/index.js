@@ -15,11 +15,11 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
   const CheckNextButton = require("steps/Battle/Loop/CheckNextButton");
   const CheckDimensionalHalo = require("steps/Battle/Loop/CheckDimensionalHalo");
 
-  const useAuto = Boolean(env.useAuto || config.Combat.UseAuto);
-
   count = count || 0;
   return Step("Battle.Loop", function() {
     scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
+
+    const useAuto = Boolean(env.useAuto || config.Combat.UseAuto);
 
     const clickResultScreen = () => process([
       Timeout(coreConfig.redirectDelay),
