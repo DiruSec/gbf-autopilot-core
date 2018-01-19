@@ -36,7 +36,13 @@ exports = module.exports = (logger, config, require, process, run) => (selector,
   const startClick = (done, fail) => {
     const result = condition();
     if (result instanceof Promise) {
-      return result.then(done, () => doClick(done, fail));
+      return result.then((result) => {
+        if (result === false) {
+          return doClick(done, fail);
+        } else {
+          return done();
+        }
+      }, () => doClick(done, fail));
     } else {
       return result ? done() : doClick(done, fail);
     }
