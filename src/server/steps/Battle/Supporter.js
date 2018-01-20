@@ -12,6 +12,7 @@ exports = module.exports = (env, process, coreConfig, config, require) => (optio
     const summonRefresh = options.summonRefresh || env.summonRefresh || Boolean(config.Summons.RerollSummonWhenNoPreferredSummonWasFound);
     const partyGroup = options.partyGroup || env.partyGroup || Number(config.PartySelection.PreferredPartyGroup);
     const partyDeck = options.partyDeck || env.partyDeck || Number(config.PartySelection.PreferredPartyDeck);
+    const partySet = options.partySet || env.partySet || config.PartySelection.PreferredPartySet;
 
     return await process([
       Wait(".atx-lead-link"),
@@ -21,6 +22,7 @@ exports = module.exports = (env, process, coreConfig, config, require) => (optio
 
       Wait(".pop-deck.supporter"),
       Timeout(coreConfig.popupDelay),
+      Support.SelectPartySet(partySet),
       Support.SelectPartyGroup(partyGroup),
       Timeout(coreConfig.popupDelay),
       Support.SelectPartyDeck(partyDeck),
