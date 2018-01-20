@@ -90,9 +90,12 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
   };
 
   return Step("Combat", function UsePotion(_, $, done, fail) {
+
     process([
       Wait(".btn-attack-start.display-on"),
-      checkPotion(done, fail),
+      checkPotion((result) => {
+        run(Timeout(1500)).then(() => done(result));
+      }, fail),
     ]).then(noop, fail);
   });
 };

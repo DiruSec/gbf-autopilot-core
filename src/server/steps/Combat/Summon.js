@@ -15,8 +15,8 @@ exports = module.exports = (require, logger, process, config, run) => (idx, stat
       }).then(() => done(true), fail);
 
       process([
-        Key.Press("5"), Timeout(config.keyDelay),
-        Key.Press(keyMap[idx]), Timeout(config.keyDelay),
+        Key.Press("5"), Timeout(config.popupDelay),
+        Key.Press(keyMap[idx]), Timeout(config.popupDelay),
         Key.Press(" ")
       ]).then(noop, fail);
     };

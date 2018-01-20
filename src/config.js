@@ -16,7 +16,7 @@ export default {
   scrollDelay: 50,
   redirectDelay: 1500,
   actionDelay: 1500,
-  reclickDelay: 1500,
+  reclickDelay: 750,
 
   rootDir: path.resolve(__dirname, ".."),
 

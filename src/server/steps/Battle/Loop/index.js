@@ -16,6 +16,11 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
   const CheckDimensionalHalo = require("steps/Battle/Loop/CheckDimensionalHalo");
 
   count = count || 0;
+  if (count == 0) {
+    // reset script vars
+    env.scriptVars = {};
+  }
+
   return Step("Battle.Loop", function() {
     scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
 

@@ -32,7 +32,7 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
     const className = attrs["class"];
     const firstClass = className.split(" ")[0];
     const element = firstClass.substring(firstClass.length - 1);
-    return process(SummonRefresh(summons, element, questPage));
+    return process(SummonRefresh(summons, element, questPage.hash));
   };
 
   return Step("Support", function SelectSummon() {
@@ -45,7 +45,9 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
 
       if (summonRefresh) {
         logger.info("Preferred summons not found. Refreshing summons.");
-        return checkSummonRefresh(payload).then(next);
+        return checkSummonRefresh(payload).then(() => {
+          return worker.sendAction("support", summons);
+        }).then(next);
       } else {
         return next(payload);
       }
