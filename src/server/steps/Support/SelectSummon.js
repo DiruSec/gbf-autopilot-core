@@ -26,6 +26,7 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
 
   const checkSummonRefresh = async (payload) => {
     if (payload.preferred) return payload;
+    logger.info("Preferred summons not found. Refreshing summons.");
     const selector = "#prt-type > .btn-type:not(.unselected)";
     const questPage = await run(Location());
     const attrs = await run(Element.Attributes(selector, "class"));
@@ -44,7 +45,6 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
       };
 
       if (summonRefresh) {
-        logger.info("Preferred summons not found. Refreshing summons.");
         return checkSummonRefresh(payload).then(() => {
           return worker.sendAction("support", summons);
         }).then(next);
