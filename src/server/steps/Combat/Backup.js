@@ -11,6 +11,7 @@ exports = module.exports = (process, require, run, worker) => (options, friend, 
 
   const State = require("steps/Battle/State");
   const Click = require("steps/Click");
+  const Check = require("steps/Check");
   const Wait = require("steps/Wait");
 
   const clickIf = (type, state) => (assist) => {
@@ -34,8 +35,12 @@ exports = module.exports = (process, require, run, worker) => (options, friend, 
         clickIf("friend", friend),
         clickIf("guild", guild),
         // TODO: handle twitter option
-        Click.Condition(".btn-usual-text", "!.pop-usual.pop-raid-assist"),
-        Click.Condition(".btn-usual-ok", ".pop-usual")
+        () => run(Check(".btn-usual-text.disable")).then(() => process([
+          Click.Condition(".btn-usual-cancel", ".pop-usual"),
+        ]), () => process([
+          Click.Condition(".btn-usual-text", "!.pop-usual.pop-raid-assist"),
+          Click.Condition(".btn-usual-ok", ".pop-usual")
+        ]))
       ]).then(() => true);
     });
   };

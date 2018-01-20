@@ -16,9 +16,13 @@ const elementMap = {
 };
 
 exports = module.exports = (require, run) => (element) => {
+  if (typeof element === "string" && element.length > 1) {
+    element = element.toLowerCase();
+    element = elementMap[element] || element.substring(0, 1);
+  }
   const Check = require("steps/Check");
   const Click = require("steps/Click");
-  const elementSelector = elementPrefix + elementMap[element.toLowerCase()];
+  const elementSelector = elementPrefix + element;
   return Step("Support", function SelectElement() {
     return run(Check(elementSelector + ".unselected")).then(() => {
       return run(Click(elementSelector));
