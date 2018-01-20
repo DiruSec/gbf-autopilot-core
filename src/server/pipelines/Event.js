@@ -19,7 +19,7 @@ exports = module.exports = (env, config, process, require, run) => () => {
 
   const nightmareMode = () => {
     env.questUrl = config.EventMode.NightmareModeUrl;
-    env.luaScript = config.EventTreasureMode.EventTreasureModeScript;
+    env.luaScript = config.EventMode.NightmareModeScript;
     env.summonPreferred = config.EventMode.NightmareModePreferredSummons;
     env.summonAttribute = config.EventMode.NightmareModeSummonAttributeTab;
     env.partyGroup = Number(config.PartySelection.PreferredNightmareModePartyGroup);
