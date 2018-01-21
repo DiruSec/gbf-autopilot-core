@@ -1,4 +1,4 @@
-import {isSupporterPage, isBattlePage} from "../helpers/LocationHelper";
+import {isSupporterPage, isBattlePage} from "~/helpers/LocationHelper";
 
 exports = module.exports = (env, logger, process, require) => () => {
   if (!env.questCount) {
@@ -19,7 +19,7 @@ exports = module.exports = (env, logger, process, require) => () => {
         pipeline.push(Battle.Loop());
       } else if (isSupporterPage(location)) {
         if (!env.questUrl) {
-          env.questUrl = location.href;
+          env.questUrl = location;
         }
         pipeline.push(Battle.Supporter());
       } else {
