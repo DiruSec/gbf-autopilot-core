@@ -41,6 +41,7 @@ export default {
     "characters.lua",
     "enemies.lua",
     "combat.lua",
+    "potions.lua"
   ],
 
   treasureRequired: 3,
