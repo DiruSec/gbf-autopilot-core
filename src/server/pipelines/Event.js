@@ -24,6 +24,7 @@ exports = module.exports = (env, config, process, require, run) => () => {
     env.summonAttribute = config.EventMode.NightmareModeSummonAttributeTab;
     env.partyGroup = Number(config.PartySelection.PreferredNightmareModePartyGroup);
     env.partyDeck = Number(config.PartySelection.PreferredNightmareModePartyDeck);
+    env.partySet = config.PartySelection.PreferredNightmareModePartySet;
     env.questCount = 0;
     env.questMax = 1;
     return env;
