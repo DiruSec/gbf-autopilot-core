@@ -23,7 +23,7 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
     if (targetNum) {
       const target = targetNum - 1;
       const selector = ".btn-command-character[pos='" + target + "']";
-      return run(Click.Condition(selector, "!.pop-usual")).then(() => next(true));
+      return run(Click.Condition(selector, ".pop-usual")).then(() => next(true));
     } else {
       return run(Wait(popupSelector)).then(() => {
         return run(Check(".btn-usual-use,.btn-usual-ok"));
