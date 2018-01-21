@@ -10,6 +10,7 @@ function unknownLocationDataType() {
  * @returns {URL}
  */
 export function locationToUrl(location) {
+  if (location instanceof URL) return location;
   if (typeof location === "object") {
     if (location.href) {
       location = location.href;
@@ -22,7 +23,7 @@ export function locationToUrl(location) {
 
 /**
  * Convert Location or URL object into string
- * @param {Location|URL|string} location 
+ * @param {Location|URL} location 
  * @returns {string}
  */
 export function locationToString(location) {
@@ -33,9 +34,9 @@ export function locationToString(location) {
 }
 
 export const pageRegexp = {
-  supporter: /\/#quest\/.+\/supporter\/\d+/,
-  result: /#result/,
-  battle: /#raid/
+  supporter: /^#.+\/supporter\/\d+/,
+  result: /^#result/,
+  battle: /^#raid/
 };
 
 /**
@@ -55,7 +56,7 @@ export function isSupporterPage(location) {
  */
 export function isBattlePage(location) {
   const url = locationToUrl(location);
-  return url.hash.startsWith(pageRegexp.battle);
+  return url.hash.match(pageRegexp.battle);
 }
 
 /**
@@ -65,7 +66,7 @@ export function isBattlePage(location) {
  */
 export function isResultPage(location) {
   const url = locationToUrl(location);
-  return url.hash.startsWith(pageRegexp.result);
+  return url.hash.match(pageRegexp.result);
 }
 
 /**

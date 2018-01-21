@@ -13,5 +13,10 @@ export function enemyAlive(state) {
 
 /**
  * @typedef {Object} State
- * @property {Array<Object>} enemies
+ * @property {Array<Enemy>} enemies
+ */
+
+/**
+ * @typedef {Object} Enemy
+ * @property {number} hp
  */
