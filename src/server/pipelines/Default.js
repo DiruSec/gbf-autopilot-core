@@ -1,3 +1,5 @@
+import {isSupporterPage, isBattlePage} from "../helpers/LocationHelper";
+
 exports = module.exports = (env, logger, process, require) => () => {
   if (!env.questCount) {
     env.questCount = 0;
@@ -12,10 +14,10 @@ exports = module.exports = (env, logger, process, require) => () => {
       const pipeline = [];
       const supporterRegexp = /#(.+)\/supporter\//;
 
-      if (location.hash.startsWith("#raid")) {
+      if (isBattlePage(location)) {
         env.questCount++;
         pipeline.push(Battle.Loop());
-      } else if (location.hash.match(supporterRegexp)) {
+      } else if (isSupporterPage(location)) {
         if (!env.questUrl) {
           env.questUrl = location.href;
         }

@@ -1,5 +1,6 @@
 import noop from "lodash/noop";
 import Step from "../../Step";
+import {isBattlePage} from "~/helpers/LocationHelper";
 
 exports = module.exports = (process, require, run) => () => {
   const Location = require("steps/Location");
@@ -12,7 +13,7 @@ exports = module.exports = (process, require, run) => () => {
         hasChanged = true;
         return run(Location());
       }).then((location) => {
-        if (location.hash.startsWith("#raid")) {
+        if (isBattlePage(location)) {
           return true; // still in battle
         } else {
           return false;

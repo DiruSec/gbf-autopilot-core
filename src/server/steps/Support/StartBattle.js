@@ -1,5 +1,6 @@
 import noop from "lodash/noop";
 import Step from "../Step";
+import {isBattlePage} from "~/helpers/LocationHelper";
 
 exports = module.exports = (logger, require, run) => () => {
   const Wait = require("steps/Wait");
@@ -31,7 +32,7 @@ exports = module.exports = (logger, require, run) => () => {
     }).then((location) => {
       hasChanged = true;
       if (location) {
-        if (location.hash.startsWith("#raid")) {
+        if (isBattlePage(location)) {
           return done(true);
         } else if (location.hash.startsWith("#quest/stage")) {
           return checkPopup(done, fail);

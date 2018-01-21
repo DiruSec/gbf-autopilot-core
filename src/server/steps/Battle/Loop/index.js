@@ -1,5 +1,6 @@
 import noop from "lodash/noop";
 import Step from "../../Step";
+import {isBattlePage, isResultPage} from "~/helpers/LocationHelper";
 
 exports = module.exports = (env, process, coreConfig, config, require, run) => (scriptPath, count) => {
   const Wait = require("steps/Wait");
@@ -34,9 +35,9 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
     ]).then(() => false);
 
     const checkAttackButton = (_, location) => {
-      if (location.hash.startsWith("#result")) {
+      if (isResultPage(location)) {
         return clickResultScreen();
-      } else if (location.hash.startsWith("#raid")) {
+      } else if (isBattlePage(location)) {
         return run(Check(".btn-attack-start.display-on")).then(() => {
           return run(Combat.Attack(useAuto));
         }, noop).then(() => true);

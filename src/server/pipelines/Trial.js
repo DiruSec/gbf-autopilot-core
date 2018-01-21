@@ -1,3 +1,5 @@
+import {isBattlePage} from "~/helpers/LocationHelper";
+
 exports = module.exports = (logger, process, require) => () => {
   const Location = require("steps/Location");
   const Battle = require("steps/Battle");
@@ -6,7 +8,7 @@ exports = module.exports = (logger, process, require) => () => {
     Location(), 
     (_, location) => {
       const pipeline = [];
-      if (location.hash.startsWith("#raid")) {
+      if (isBattlePage(location)) {
         pipeline.push(Battle.Loop());
       } else {
         logger.info("Waiting for trial battle page...");
