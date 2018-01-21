@@ -9,7 +9,7 @@ exports = module.exports = (env, process, coreConfig, config, require) => (optio
   return Step("Battle", async function Supporter() {
     const summonAttribute = options.summonAttribute || env.summonAttribute || config.Summons.DefaultSummonAttributeTab;
     const summonPreferred = options.summonPreferred || env.summonPreferred || config.Summons.PreferredSummons;
-    const summonRefresh = options.summonRefresh || env.summonRefresh || Boolean(config.Summons.RerollSummonWhenNoPreferredSummonWasFound);
+    const summonReroll = options.summonReroll || env.summonReroll || Boolean(config.Summons.RerollSummonWhenNoPreferredSummonWasFound);
     const partyGroup = options.partyGroup || env.partyGroup || Number(config.PartySelection.PreferredPartyGroup);
     const partyDeck = options.partyDeck || env.partyDeck || Number(config.PartySelection.PreferredPartyDeck);
     const partySet = options.partySet || env.partySet || config.PartySelection.PreferredPartySet;
@@ -18,7 +18,7 @@ exports = module.exports = (env, process, coreConfig, config, require) => (optio
       Wait(".atx-lead-link"),
       Support.SelectElement(summonAttribute),
       Timeout(coreConfig.scrollDelay),
-      Support.SelectSummon(summonPreferred, summonRefresh),
+      Support.SelectSummon(summonPreferred, summonReroll),
 
       Wait(".pop-deck.supporter"),
       Timeout(coreConfig.popupDelay),

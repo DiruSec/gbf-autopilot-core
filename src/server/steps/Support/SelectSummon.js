@@ -12,7 +12,7 @@ import Step from "../Step";
 //   f: "favorite"
 // };
 
-exports = module.exports = (env, context, coreConfig, require, run, process) => (summons, summonRefresh) => {
+exports = module.exports = (env, context, coreConfig, require, run, process) => (summons, summonReroll) => {
   if (isString(summons)) {
     summons = summons.split(",").map((summon) => summon.trim());
   }
@@ -22,9 +22,9 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
   const Timeout = require("steps/Timeout");
   const Element = require("steps/Element");
   const Location = require("steps/Location");
-  const SummonRefresh = require("pipelines/SummonRefresh");
+  const SummonReroll = require("pipelines/SummonReroll");
 
-  const checkSummonRefresh = async (payload) => {
+  const checkSummonReroll = async (payload) => {
     if (payload.preferred) return payload;
     logger.info("Preferred summons not found. Refreshing summons.");
     const selector = "#prt-type > .btn-type:not(.unselected)";
@@ -33,7 +33,7 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
     const className = attrs["class"];
     const firstClass = className.split(" ")[0];
     const element = firstClass.substring(firstClass.length - 1);
-    return process(SummonRefresh(summons, element, questPage.hash));
+    return process(SummonReroll(summons, element, questPage.hash));
   };
 
   return Step("Support", function SelectSummon() {
@@ -44,8 +44,8 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
         return run(Timeout(coreConfig.scrollDelay), payload);
       };
 
-      if (summonRefresh) {
-        return checkSummonRefresh(payload).then(() => {
+      if (summonReroll) {
+        return checkSummonReroll(payload).then(() => {
           return worker.sendAction("support", summons);
         }).then(next);
       } else {
