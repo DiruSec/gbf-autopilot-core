@@ -1,4 +1,4 @@
-import Step from "../Step";
+import Step2 from "../Step2";
 
 exports = module.exports = (process, require, run, worker) => (options, friend, guild) => {
   var all = options;
@@ -14,15 +14,15 @@ exports = module.exports = (process, require, run, worker) => (options, friend, 
   const Check = require("steps/Check");
   const Wait = require("steps/Wait");
 
-  const clickIf = (type, state) => (assist) => {
+  const clickIf = (type, state) => Step2((assist) => {
     // the button state already set to the expected state
     const active = assist[type];
-    if (active != state) return assist;
+    if (active == state) return assist;
 
     const selector = ".pop-start-assist .btn-check." + type;
     const condition = selector + "[active='" + active + "']";
     return run(Click.Condition(selector, condition)).then(() => assist);
-  };
+  });
 
   const checkBattle = () => {
     return run(State()).then((state) => {
@@ -45,7 +45,7 @@ exports = module.exports = (process, require, run, worker) => (options, friend, 
     });
   };
 
-  return Step("Combat", function Backup() {
+  return Step2("Combat", function Backup() {
     return process([
       Wait(".btn-attack-start.display-on"),
       checkBattle
