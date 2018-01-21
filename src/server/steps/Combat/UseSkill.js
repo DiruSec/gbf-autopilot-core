@@ -1,7 +1,7 @@
 import noop from "lodash/noop";
 import Step from "../Step";
 import keyMap from "./keyMap";
-import {enemyAlive} from "~/server/helpers/StateHelper";
+import {enemyAlive} from "~/helpers/StateHelper";
 
 exports = module.exports = (process, logger, config, coreConfig, require, run) => (num, skillNum, target, state) => {
   const Key = require("steps/Key");

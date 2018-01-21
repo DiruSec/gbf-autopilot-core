@@ -1,5 +1,5 @@
 import Step from "../Step";
-import {enemyAlive} from "~/server/helpers/StateHelper";
+import {enemyAlive} from "~/helpers/StateHelper";
 
 exports = module.exports = (logger, config, require, run) => (target) => {
   const Click = require("steps/Click");

@@ -1,7 +1,7 @@
 import noop from "lodash/noop";
 import keyMap from "./keyMap";
 import Step from "../Step";
-import {enemyAlive} from "~/server/helpers/StateHelper";
+import {enemyAlive} from "~/helpers/StateHelper";
 
 exports = module.exports = (require, logger, process, config, run) => (idx, state) => {
   const WaitForResult = require("steps/Combat/WaitForResult");

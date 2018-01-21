@@ -1,6 +1,6 @@
 import noop from "lodash/noop";
 import Step from "../Step";
-import {enemyAlive} from "~/server/helpers/StateHelper";
+import {enemyAlive} from "~/helpers/StateHelper";
 
 exports = module.exports = (logger, config, require, run, process) => (useAuto) => {
   const Wait = require("steps/Wait");
