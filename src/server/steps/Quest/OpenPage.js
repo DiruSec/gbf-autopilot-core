@@ -1,13 +1,15 @@
 import {URL} from "url";
+import {locationToString} from "~/helpers/LocationHelper";
 import Step from "../Step";
 
-exports = module.exports = (env, require, run, config, logger) => (url) => {
+exports = module.exports = (env, require, run, config, logger) => (location) => {
   const CheckAP = require("steps/Quest/CheckAP");
   const CheckItem = require("steps/Quest/CheckItem");
   const Location = require("steps/Location");
   const Ajax = require("steps/Ajax");
   const Stop = require("steps/Stop");
 
+  const url = locationToString(location);
   const parts = new URL(url).hash.split("/");
   const ajaxOptions = {
     url: "/quest/set_return_point",

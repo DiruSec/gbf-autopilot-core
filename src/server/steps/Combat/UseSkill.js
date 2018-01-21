@@ -41,7 +41,10 @@ exports = module.exports = (process, logger, config, coreConfig, require, run) =
       run(Location.Wait()).then(finishAction);
       run(WaitForResult()).then(finishAction);
       process(steps).then(() => {
-        return run(Wait(".pop-usual"));
+        return process([
+          Wait(".pop-usual"),
+          Timeout(1500)
+        ]);
       }).then(() => {
         if (hasUsedSkill) return true;
         return run(Key.Press(" ")).then(finishAction);

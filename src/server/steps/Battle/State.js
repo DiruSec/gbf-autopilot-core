@@ -8,6 +8,7 @@ exports = module.exports = (worker, require, run) => () => {
     const vmState = await run(Viramate({type: "getCombatState"}));
     const state = await worker.sendAction("battle.state");
     const count = await worker.sendAction("battle.count");
+    const potion = await worker.sendAction("battle.potion");
     const result = vmState;
 
     forEach(state.party, (chara, num) => {
@@ -16,6 +17,7 @@ exports = module.exports = (worker, require, run) => () => {
     });
     result.summons = values(state.summons);
     result.battle = count;
+    result.potion = potion;
     return result;
   });
 };
