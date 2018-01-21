@@ -7,21 +7,19 @@ exports = module.exports = (env, config, require, logger, process, run) => () =>
   const summons = env.summonPreferred || config.Summons.PreferredSummons;
   const attribute = env.summonAttribute || config.Summons.DefaultSummonAttributeTab;
 
-  const steps = [
-    async () => {
-      const location = await run(Location());
-      if (isSupporterPage(location)) {
-        return process([
-          Support.SelectElement(attribute),
-          Support.SummonReroll(summons, attribute, location)
-        ]);
-      } else {
-        logger.info("Waiting for supporter page...");
-        return run(Location.Wait(pageRegexp.supporter)).then(() => process(steps));
-      }
+  const checkLocation = () => run(Location()).then((location) => {
+    if (isSupporterPage(location)) {
+      return process([
+        Support.SelectElement(attribute),
+        Support.SelectSummon(summons, true)
+      ]);
+    } else {
+      logger.info("Waiting for supporter page...");
+      return run(Location.Wait(pageRegexp.supporter)).then(() => run(checkLocation));
     }
-  ];
-  return steps;
+  });
+
+  return [checkLocation];
 };
 exports["@require"] = ["env", "config", "require", "logger", "process", "run"];
 exports["@name"] = "Summon Reroll";
