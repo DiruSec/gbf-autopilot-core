@@ -43,7 +43,13 @@ exports = module.exports = (require, run, process) => (next, stop) => {
       // else, wait for the next button to appear (expected usual behavior)
       // EDIT: in cases of refreshes, it may instead redirect to the next battle or result page
       if (enemyAlive(state)) {
-        return run(Check(".btn-result"));
+        return run(Check(".btn-result")).catch(() => ({
+          hasNextButton: true,
+          inBattle: true
+        }), () => ({
+          hasNextButton: false,
+          inBattle: true
+        }));
       } else {
         return waitForLocationOrNextButton();
       }
