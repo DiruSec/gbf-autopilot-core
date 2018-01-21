@@ -61,4 +61,5 @@ exports = module.exports = (env, config, require, context, process, run) => (sum
   ];
 };
 exports["@require"] = ["env", "config", "require", "context", "process", "run"];
+exports["@name"] = "Summon Reroll";
 exports.test = (config) => config.Summons.OnlyRerollSummonsEnabled;
