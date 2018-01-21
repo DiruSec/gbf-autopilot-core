@@ -1,16 +1,42 @@
 import {URL} from "url";
 
+function unknownLocationDataType() {
+  throw new Error("Unknown location data type!");
+}
+
 /**
- * Convert string or plain object into URL object
- * @param {Object|string} location 
+ * Convert Location object or string into URL object
+ * @param {Location|string} location 
  * @returns {URL}
  */
 export function locationToUrl(location) {
-  if (typeof location === "object" && location.href) {
-    location = location.href;
+  if (typeof location === "object") {
+    if (location.href) {
+      location = location.href;
+    } else {
+      return unknownLocationDataType(); 
+    }
   }
   return new URL(location);
 }
+
+/**
+ * Convert Location or URL object into string
+ * @param {Location|URL|string} location 
+ * @returns {string}
+ */
+export function locationToString(location) {
+  if (typeof location === "string") return location;
+  if (location instanceof URL) return location.toString();
+  if (location.href) return location.href;
+  return unknownLocationDataType(); 
+}
+
+export const pageRegexp = {
+  supporter: /\/#quest\/.+\/supporter\/\d+/,
+  result: /#result/,
+  battle: /#raid/
+};
 
 /**
  * Check if current location is a quest supporter page
@@ -19,7 +45,7 @@ export function locationToUrl(location) {
  */
 export function isSupporterPage(location) {
   const url = locationToUrl(location);
-  return !!url.hash.match(/\/#quest\/.+\/supporter\/\d+/);
+  return !!url.hash.match(pageRegexp.supporter);
 }
 
 /**
@@ -29,7 +55,7 @@ export function isSupporterPage(location) {
  */
 export function isBattlePage(location) {
   const url = locationToUrl(location);
-  return url.hash.startsWith("#raid");
+  return url.hash.startsWith(pageRegexp.battle);
 }
 
 /**
@@ -39,5 +65,10 @@ export function isBattlePage(location) {
  */
 export function isResultPage(location) {
   const url = locationToUrl(location);
-  return url.hash.startsWith("#result");
+  return url.hash.startsWith(pageRegexp.result);
 }
+
+/**
+ * @typedef {Object} Location
+ * @property {string} href
+ */
