@@ -47,14 +47,13 @@ exports = module.exports = (require, run, process) => (next, stop) => {
       } else {
         return waitForLocationOrNextButton();
       }
-
-    }, () => stop(false)).then((condition) => {
+    }).then((condition) => {
       if (condition.inBattle) {
         return condition.hasNextButton ? run(ClickNextButton()).then(stop) : next();
       } else {
         return stop(false);
       }
-    }, next);
+    });
   });
 };
 
