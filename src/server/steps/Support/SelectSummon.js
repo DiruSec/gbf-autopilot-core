@@ -22,18 +22,18 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
   const Timeout = require("steps/Timeout");
   const Element = require("steps/Element");
   const Location = require("steps/Location");
-  const SummonReroll = require("pipelines/SummonReroll");
+  const SummonReroll = require("steps/Support/SummonReroll");
 
   const checkSummonReroll = async (payload) => {
     if (payload.preferred) return payload;
     logger.info("Preferred summons not found. Refreshing summons.");
     const selector = "#prt-type > .btn-type:not(.unselected)";
-    const questPage = await run(Location());
+    const location = await run(Location());
     const attrs = await run(Element.Attributes(selector, "class"));
     const className = attrs["class"];
     const firstClass = className.split(" ")[0];
     const element = firstClass.substring(firstClass.length - 1);
-    return process(SummonReroll(summons, element, questPage.hash));
+    return process(SummonReroll(summons, element, location));
   };
 
   return Step("Support", function SelectSummon() {

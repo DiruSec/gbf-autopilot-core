@@ -1,65 +1,25 @@
-import Step2 from "../steps/Step2";
+import {isSupporterPage, pageRegexp} from "../../helpers/LocationHelper";
 
-const trialPage = "#quest/supporter/990011/17";
-
-exports = module.exports = (env, config, require, context, process, run) => (summons, type, questPage) => {
-  const {server, worker, logger} = context;
-
+exports = module.exports = (env, config, require, logger, process, run) => () => {
   const Location = require("steps/Location");
-  const Support = require("steps/Support");
-  const Timeout = require("steps/Timeout");
-  const Combat = require("steps/Combat");
-  const Wait = require("steps/Wait");
-  const Key = require("steps/Key");
+  const SummonReroll = require("steps/Support/SummonReroll");
 
-  summons = summons || env.summonPreferred || config.Summons.PreferredSummons;
-  type = type || env.summonAttribute || config.Summons.DefaultSummonAttributeTab;
+  const summons = env.summonPreferred || config.Summons.PreferredSummons;
+  const attribute = env.summonAttribute || config.Summons.DefaultSummonAttributeTab;
 
-  const returnToQuestPage = Step2((payload) => {
-    return process([
-      Location.Change(questPage),
-      Wait(".atx-lead-link"),
-      Support.SelectElement(type),
-    ]).then(() => payload);
-  });
-
-  const enterTrialBattle = (retry, payload) => process([
-    () => server.makeRequest("click", payload),
-    Wait(".pop-deck.supporter"),
-    Support.StartBattle(),
-    Wait(".pop-usual.pop-show"),
-    Key.Press("space"), Timeout(1500),
-    Combat.Retreat(),
-    retry
-  ]);
-
-  const checkSummons = () => process([
-    Location.Change(trialPage),
-    Wait(".atx-lead-link"),
-    Support.SelectElement(type),
-    () => worker.sendAction("support", summons),
-    Step2((payload) => {
-      return payload.preferred ? payload : enterTrialBattle(checkSummons, payload);
-    })
-  ]);
-
-  const checkLocation = () => {
-    if (questPage) return questPage;
-    return run(Location()).then((location) => {
-      if (location.hash.indexOf("/supporter/") >= 0) {
-        return questPage = location.hash;
+  const steps = [
+    async () => {
+      const location = await run(Location());
+      if (isSupporterPage(location)) {
+        return run(SummonReroll(summons, attribute, location));
+      } else {
+        logger.info("Waiting for supporter page...");
+        return run(Location.Wait(pageRegexp.supporter)).then(() => process(steps));
       }
-      logger.info("Waiting for supporter page...");
-      return run(Location.Wait()).then(checkLocation);
-    });
-  };
-
-  return [
-    checkLocation,
-    checkSummons,
-    returnToQuestPage
+    }
   ];
+  return steps;
 };
-exports["@require"] = ["env", "config", "require", "context", "process", "run"];
+exports["@require"] = ["env", "config", "require", "logger", "process", "run"];
 exports["@name"] = "Summon Reroll";
 exports.test = (config) => config.Summons.OnlyRerollSummonsEnabled;
