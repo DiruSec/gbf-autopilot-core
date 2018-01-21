@@ -1,5 +1,7 @@
 import path from "canonical-path";
 import {name} from "../package.json";
+
+import SummonRerollPipeline from "~/server/pipelines/SummonReroll";
 import SchedulingPipeline from "~/server/pipelines/Scheduling";
 import CoopSoloPipeline from "~/server/pipelines/CoopSolo";
 import CoopGuestPipeline from "~/server/pipelines/CoopGuest";
@@ -23,6 +25,7 @@ export default {
   defaultPipeline: DefaultPipeline,
   pipelines: [
     TrialPipeline,
+    SummonRerollPipeline,
     SchedulingPipeline,
     CoopSoloPipeline,
     CoopGuestPipeline,
