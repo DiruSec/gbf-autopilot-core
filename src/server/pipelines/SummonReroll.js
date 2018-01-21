@@ -1,8 +1,8 @@
-import {isSupporterPage, pageRegexp} from "../../helpers/LocationHelper";
+import {isSupporterPage, pageRegexp} from "~/helpers/LocationHelper";
 
 exports = module.exports = (env, config, require, logger, process, run) => () => {
   const Location = require("steps/Location");
-  const SummonReroll = require("steps/Support/SummonReroll");
+  const Support = require("steps/Support");
 
   const summons = env.summonPreferred || config.Summons.PreferredSummons;
   const attribute = env.summonAttribute || config.Summons.DefaultSummonAttributeTab;
@@ -11,7 +11,10 @@ exports = module.exports = (env, config, require, logger, process, run) => () =>
     async () => {
       const location = await run(Location());
       if (isSupporterPage(location)) {
-        return run(SummonReroll(summons, attribute, location));
+        return process([
+          Support.SelectElement(attribute),
+          Support.SummonReroll(summons, attribute, location)
+        ]);
       } else {
         logger.info("Waiting for supporter page...");
         return run(Location.Wait(pageRegexp.supporter)).then(() => process(steps));
