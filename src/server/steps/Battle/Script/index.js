@@ -7,7 +7,7 @@ exports = module.exports = (extension, require) => (scriptPath, setupScripts, ma
   const createCodeRunner = require("steps/Battle/Script/createCodeRunner");
   const setGlobalVars = require("steps/Battle/Script/setGlobalVars");
 
-  return Step2("Battle", function Script(state, done, fail) {
+  return Step2("Battle", function Script(state, resolve, reject) {
     const L = lauxlib.luaL_newstate();
     lualib.luaL_openlibs(L);
     lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
@@ -15,7 +15,14 @@ exports = module.exports = (extension, require) => (scriptPath, setupScripts, ma
     const executeCode = createCodeRunner(L);
     const globalVars = createGlobalVars(state, {
       scriptPath,
-      done, fail,
+      done(result) {
+        lua.lua_close(L);
+        return resolve(result);
+      },
+      fail(err) {
+        lua.lua_close(L);
+        return reject(err);
+      }
     });
     const runScript = (script) => {
       const escapedScriptPath = script.replace(/\\/g, "\\\\");
