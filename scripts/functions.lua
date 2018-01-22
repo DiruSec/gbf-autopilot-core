@@ -24,12 +24,20 @@ function Stop()
   run_processes({steps:Stop()})
 end
 
+function error_handler(err)
+  script:fail(err)
+  return false
+end
+
 function dofile(path)
-  local result, err = loadfile(path)
-  if result == nil then
-    logger:error(err)
-    script:fail(err)
+  local func, loadErr = loadfile(path)
+  if func == nil then
+    return error_handler(loadErr)
   else
-    result()
+    local status, callErr = pcall(func)
+    if not status then
+      return error_handler(callErr)
+    end
   end
+  return true
 end
