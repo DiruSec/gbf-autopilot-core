@@ -25,6 +25,7 @@ function Stop()
 end
 
 function error_handler(err)
+  _running = false
   script:fail(err)
   return false
 end
