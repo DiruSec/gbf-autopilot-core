@@ -41,12 +41,14 @@ function update_character(idx, chara, character)
     end
   end
 
-  characters[character.name] = character
-  g_character = get_character_by_index(idx)
-  if g_character ~= nil and g_character.name ~= character.name then
-    g_character.is_alive = false
+  if idx > 0 then
+    characters[character.name] = character
+    g_character = get_character_by_index(idx)
+    if g_character ~= nil and g_character.name ~= character.name then
+      g_character.is_alive = false
+    end
+    set_character_by_index(idx, character)
   end
-  set_character_by_index(idx, character)
 
   return character
 end

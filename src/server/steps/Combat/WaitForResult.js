@@ -4,7 +4,7 @@ exports = module.exports = (logger, require, run) => () => {
   const WaitForAjax = require("steps/WaitForAjax");
   return Step("Combat", async function WaitForResult() {
     logger.debug("Waiting for action result");
-    await run(WaitForAjax(/\/rest\/(multi)?raid\/.+_result\.json/));
+    await run(WaitForAjax(/\/rest\/(multi)?raid\/(user_recovery|.+_result)\.json/));
     logger.debug("Action result received");
   });
 };

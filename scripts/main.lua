@@ -9,12 +9,9 @@ co = coroutine.create(function ()
   init_state(_state)
   local status, err = pcall(func)
   if not status then
-    _running = false
     return error_handler(err)
   else
-    _running = false
-    script:done()
-    return true
+    return success_handler(true)
   end
 end)
 coroutine.resume(co)

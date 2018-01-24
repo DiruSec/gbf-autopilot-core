@@ -1,5 +1,17 @@
 js = require 'js'
 
+function success_handler(result)
+  _running = false
+  script:done(result)
+  return coroutine.yield()
+end
+
+function error_handler(err)
+  _running = false
+  script:fail(err)
+  return coroutine.yield()
+end
+
 function run_processes(processes, lastResult)
   if not _running then
     return nil
@@ -10,24 +22,25 @@ function run_processes(processes, lastResult)
     processesArray:push(process)
   end
 
-  local co = coroutine.running()
   local promise = _context:process(processesArray, lastResult)
+  local co = coroutine.running()
   promise['then'](promise, function (self, result)
     coroutine.resume(co, result)
   end, function (self, err)
+    logger:error(err)
     coroutine.resume(co, nil, err)
   end)
-  return coroutine.yield()
+  
+  local result, err = coroutine.yield()
+  if err ~= nil then
+    return error_handler(err)
+  else
+    return result
+  end
 end
 
 function Stop()
   run_processes({steps:Stop()})
-end
-
-function error_handler(err)
-  _running = false
-  script:fail(err)
-  return false
 end
 
 function dofile(path)
@@ -41,4 +54,9 @@ function dofile(path)
     end
   end
   return true
+end
+
+function import(path)
+  path = string.format('%s/%s', script.dir, path)
+  return dofile(path)
 end

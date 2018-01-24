@@ -24,6 +24,7 @@ exports = module.exports = (env, server, logger, context, config, require) => (s
     _config: config,
     logger: logger,
     script: {
+      dir: extras.scriptDir,
       path: extras.scriptPath,
       done: extras.done, 
       fail: extras.fail

@@ -12,7 +12,7 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
   const Wait = require("steps/Wait");
   const Key = require("steps/Key");
 
-  const popupSelector = [".pop-raid-item", ".pop-event-item"];
+  const popupSelector = [".pop-raid-item", ".pop-event-item", ".pop-item-confirm"];
   const waitForResult = (done, fail) => (success) => {
     if (!success) return done(false);
     return run(WaitForResult()).then(() => done(true), fail);
@@ -41,7 +41,7 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
     // apparently potionNum above 5 doesn't work with Viramate keybinding
     // (eg. revival potion)
     if (potionNum <= 5) {
-      return run(Key.Press(potionNum));
+      return run(Key.Condition(potionNum, ".prt-item-info > .lis-item"));
     } else {
       const id = potionNum - 3;
       const selector = ".prt-event-item .lis-item[item-id='" + id + "']";
@@ -63,7 +63,7 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
     } else if (potionNum == 3) {
       // in case of HL raids without full elixir allowed
       // TODO: check limit_number & limit_remain
-      if (!potion.full.limit_flg) return false;
+      if (potion.full.limit_flg) return false;
       amount = Number(potion.full.count);
     } else if (potionNum <= 6) {
       // for now only works for GW events
@@ -82,7 +82,7 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
         return done(false);
       }
       return process([
-        Key.Press("H"), Timeout(coreConfig.popupDelay),
+        Key.Condition("h", "!.pop-usual.pop-raid-item"), Timeout(coreConfig.popupDelay),
         selectPotion, Timeout(coreConfig.popupDelay),
         checkTarget(done, fail)
       ]);
