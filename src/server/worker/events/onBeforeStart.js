@@ -9,29 +9,39 @@ export default function(extension) {
       scriptVars: {}
     };
 
-    const container = context.container = new WorkerContainer(context);
-    container.register("coreConfig", coreConfig)
+    const container = (context.container = new WorkerContainer(context));
+    container
+      .register("coreConfig", coreConfig)
       .register("extension", extension)
       .register("env", env);
 
-    var selectedPipeline; 
-    forEach(extension.pipelines, (pipeline) => {
+    var selectedPipeline;
+    forEach(extension.pipelines, pipeline => {
       if (typeof pipeline !== "function") {
         throw new Error("Pipeline must be a function!");
       }
 
       const name = pipeline["@name"] || pipeline.name || "<anonymous>";
-      const passed = container.inject(pipeline.test || function() {
-        throw new Error("Non-default pipeline '" + name + "' must implement a test function!");
-      }, "config");
+      const passed = container.inject(
+        pipeline.test ||
+          function() {
+            throw new Error(
+              "Non-default pipeline '" +
+                name +
+                "' must implement a test function!"
+            );
+          },
+        "config"
+      );
 
-      if (passed) {
+      if (passed || context.config.General.Mode === name) {
         context.logger.info("Using '" + name + "' mode.");
         selectedPipeline = container.inject(pipeline);
         return false;
       }
     });
 
-    env.pipeline = selectedPipeline || container.inject(extension.defaultPipeline);
+    env.pipeline =
+      selectedPipeline || container.inject(extension.defaultPipeline);
   };
 }

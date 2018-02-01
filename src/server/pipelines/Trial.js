@@ -1,11 +1,11 @@
-import {isBattlePage} from "~/helpers/LocationHelper";
+import { isBattlePage } from "~/helpers/LocationHelper";
 
 exports = module.exports = (logger, process, require) => () => {
   const Location = require("steps/Location");
   const Battle = require("steps/Battle");
 
   const steps = [
-    Location(), 
+    Location(),
     (_, location) => {
       const pipeline = [];
       if (isBattlePage(location)) {
@@ -22,6 +22,6 @@ exports = module.exports = (logger, process, require) => () => {
   return steps;
 };
 
-exports.test = (config) => config.Debug.TrialBattleMode;
+exports.test = config => config.Debug.TrialBattleMode;
 exports["@require"] = ["logger", "process", "require"];
 exports["@name"] = "Trial";
