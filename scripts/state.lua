@@ -39,12 +39,12 @@ function refresh_state(success)
     steps.Battle:State(nil)
   })
   if err then
-    script:fail(err)
-    return
+    logger:warn(err)
+    return success_handler(false)
   end
-  if check_state(state) then
+  if state ~= nil and check_state(state) then
     update_state(state)
   else
-    script:done()
+    return success_handler(true)
   end
 end

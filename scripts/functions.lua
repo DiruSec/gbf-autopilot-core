@@ -27,16 +27,10 @@ function run_processes(processes, lastResult)
   promise['then'](promise, function (self, result)
     coroutine.resume(co, result)
   end, function (self, err)
-    logger:error(err)
     coroutine.resume(co, nil, err)
   end)
   
-  local result, err = coroutine.yield()
-  if err ~= nil then
-    return error_handler(err)
-  else
-    return result
-  end
+  return coroutine.yield()
 end
 
 function Stop()
