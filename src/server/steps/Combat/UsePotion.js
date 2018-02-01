@@ -19,7 +19,12 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
   };
 
   const checkTarget = (done, fail) => () => {
-    const next = waitForResult(done, fail);
+    var success = false;
+    waitForResult(done, fail, () => success);
+    const next = (result) => {
+      return done(success = result);
+    };
+
     if (targetNum) {
       const target = targetNum - 1;
       const selector = ".btn-command-character[pos='" + target + "']";
@@ -90,7 +95,6 @@ exports = module.exports = (coreConfig, require, worker, process, run) => (potio
   };
 
   return Step("Combat", function UsePotion(_, $, done, fail) {
-
     process([
       Wait(".btn-attack-start.display-on"),
       checkPotion((result) => {

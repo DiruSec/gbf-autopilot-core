@@ -20,7 +20,7 @@ exports = module.exports = (logger, config, require, run, process) => (useAuto) 
       logger.info(useAuto ? "Auto-attacking..." : "Attacking...");
       run(WaitForResult()).then(() => {
         return run(Timeout(config.Combat.MinWaitTimeInMsAfterAttack));
-      }).then(resolve, reject);
+      }).then(() => resolve(true), reject);
       process([
         Click.Condition(".btn-attack-start.display-on"),
         () => useAuto ? process([

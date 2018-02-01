@@ -56,13 +56,14 @@ exports = module.exports = (process, logger, config, coreConfig, require, run) =
         const chara = (state.party[num-1] || {});
         const skill = (chara.skills || [])[skillNum-1];
         const available = (skill || {}).available;
-        available ? doSkill() : done(false);
+        return available ? doSkill() : done(false);
       } else {
         logger.debug("Enemies dead. Skipping skill.");
         return done(false);
       }
     } else {
-      doSkill();
+      logger.debug("Use skill without state!");
+      return doSkill();
     }
   });
 };
