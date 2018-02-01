@@ -34,7 +34,7 @@ export function locationToString(location) {
 }
 
 export const pageRegexp = {
-  supporter: /^#.+\/supporter\/\d+/,
+  supporter: /^#.+\/supporter(_raid)?\/\d+/,
   result: /^#result/,
   battle: /^#raid/
 };
