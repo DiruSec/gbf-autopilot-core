@@ -1,8 +1,12 @@
-import {lua, lauxlib, lualib} from "fengari";
+import { lua, lauxlib, lualib } from "fengari";
 import jslib from "fengari-interop";
 import Step2 from "../../Step2";
 
-exports = module.exports = (extension, require, coreConfig) => (scriptPath, setupScripts, mainScript) => {
+exports = module.exports = (extension, require, coreConfig) => (
+  scriptPath,
+  setupScripts,
+  mainScript
+) => {
   const createGlobalVars = require("steps/Battle/Script/createGlobalVars");
   const createCodeRunner = require("steps/Battle/Script/createCodeRunner");
   const setGlobalVars = require("steps/Battle/Script/setGlobalVars");
@@ -29,7 +33,7 @@ exports = module.exports = (extension, require, coreConfig) => (scriptPath, setu
         return reject(err);
       }
     });
-    const runScript = (script) => {
+    const runScript = script => {
       const escapedScriptPath = script.replace(/\\/g, "\\\\");
       executeCode(`dofile('${escapedScriptPath}')`);
     };

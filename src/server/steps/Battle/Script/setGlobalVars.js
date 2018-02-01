@@ -1,4 +1,4 @@
-import {lua} from "fengari";
+import { lua } from "fengari";
 import jslib from "fengari-interop";
 import forEach from "lodash/forEach";
 
