@@ -1,4 +1,4 @@
-import { lua, lauxlib, lualib } from "fengari";
+import { lua, lauxlib, lualib, to_luastring } from "fengari";
 import jslib from "fengari-interop";
 import Step2 from "../../Step2";
 
@@ -18,7 +18,7 @@ exports = module.exports = (extension, require, coreConfig) => (
       // lua.lua_close(L);
     };
     lualib.luaL_openlibs(L);
-    lauxlib.luaL_requiref(L, lua.to_luastring("js"), jslib.luaopen_js, 0);
+    lauxlib.luaL_requiref(L, to_luastring("js"), jslib.luaopen_js, 0);
 
     const executeCode = createCodeRunner(L);
     const globalVars = createGlobalVars(state, {

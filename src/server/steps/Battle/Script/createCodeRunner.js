@@ -1,8 +1,8 @@
-import {lua, lauxlib} from "fengari";
+import {lua, lauxlib, to_luastring} from "fengari";
 
 exports = module.exports = (logger) => (L) => {
   return function executeCode(code) {
-    const result = lauxlib.luaL_dostring(L, lua.to_luastring(code));
+    const result = lauxlib.luaL_dostring(L, to_luastring(code));
 
     if (result > 0) {
       const top = lua.lua_gettop(L);
