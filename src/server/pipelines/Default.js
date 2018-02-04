@@ -1,4 +1,4 @@
-import {isSupporterPage, isBattlePage, locationToString} from "~/helpers/LocationHelper";
+import {isSupporterPage, isBattlePage, locationToString, pageRegexp} from "~/helpers/LocationHelper";
 
 exports = module.exports = (env, logger, process, require) => () => {
   if (!env.questCount) {
@@ -12,7 +12,6 @@ exports = module.exports = (env, logger, process, require) => () => {
     Location(),
     (_, location) => {
       const pipeline = [];
-      const supporterRegexp = /#(.+)\/supporter\//;
 
       if (isBattlePage(location)) {
         env.questCount++;
@@ -28,7 +27,7 @@ exports = module.exports = (env, logger, process, require) => () => {
           pipeline.push(OpenPage(env.questUrl));
         } else {
           logger.info("Waiting for supporter page...");
-          pipeline.push(Location.Wait(supporterRegexp));
+          pipeline.push(Location.Wait(pageRegexp.supporter));
         }
       }
 

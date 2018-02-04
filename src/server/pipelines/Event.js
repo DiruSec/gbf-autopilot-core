@@ -22,6 +22,7 @@ exports = module.exports = (env, config, process, require, run) => () => {
     env.luaScript = config.EventMode.NightmareModeScript;
     env.summonPreferred = config.EventMode.NightmareModePreferredSummons;
     env.summonAttribute = config.EventMode.NightmareModeSummonAttributeTab;
+    env.summonReroll = config.EventMode.RerollSummonWhenNoPreferredSummonWasFoundForNightmareMode;
     env.partyGroup = Number(config.PartySelection.PreferredNightmareModePartyGroup);
     env.partyDeck = Number(config.PartySelection.PreferredNightmareModePartyDeck);
     env.partySet = config.PartySelection.PreferredNightmareModePartySet;

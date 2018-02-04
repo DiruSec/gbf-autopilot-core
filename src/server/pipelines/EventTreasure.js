@@ -28,6 +28,7 @@ exports = module.exports = (env, config, coreConfig, process, require, run) => (
     env.luaScript = config.EventTreasureMode.NightmareModeScript;
     env.summonPreferred = config.EventTreasureMode.NightmareModePreferredSummons;
     env.summonAttribute = config.EventTreasureMode.NightmareModeSummonAttributeTab;
+    env.summonReroll = config.EventTreasureMode.RerollSummonWhenNoPreferredSummonWasFoundForNightmareMode;
     env.partyGroup = Number(config.PartySelection.PreferredNightmareModePartyGroup);
     env.partyDeck = Number(config.PartySelection.PreferredNightmareModePartyDeck);
     env.partySet = config.PartySelection.PreferredNightmareModePartySet;
