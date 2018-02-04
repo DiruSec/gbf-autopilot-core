@@ -20,7 +20,7 @@ exports = module.exports = (env, process, coreConfig, config, require) => (optio
       Timeout(coreConfig.scrollDelay),
       Support.SelectSummon(summonPreferred, summonReroll),
 
-      Wait(".pop-deck.supporter"),
+      Wait(".pop-deck.supporter,.pop-deck.supporter_raid"),
       Timeout(coreConfig.popupDelay),
       Support.SelectPartySet(partySet),
       Support.SelectPartyGroup(partyGroup),
