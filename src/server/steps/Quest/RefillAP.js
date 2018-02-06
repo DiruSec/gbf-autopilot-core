@@ -1,16 +1,16 @@
-import Step from "../Step";
+import Refill from "./Refill";
 
-exports = module.exports = (env, require, logger, run) => (num) => {
-  num = num || 1;
+const factory = Refill("AP", 2);
+factory.on("beforeRefill", (container) => {
+  const logger = container.resolve("logger");
+  const env = container.resolve("env");
   env.potUsed = env.potUsed || 0;
-  const UseItem = require("steps/Quest/UseItem");
-  return Step("Quest", async function RefillAP() {
-    logger.debug("Refilling AP...");
-    await run(UseItem(2, num));
-    env.potUsed++;
-    logger.debug("Pot used:", env.potUsed);
-    return true;
-  });
-};
-
-exports["@require"] = ["env", "require", "logger", "run"];
+  logger.debug("Refilling AP...");
+});
+factory.on("afterRefill", (container, itemId, num) => {
+  const logger = container.resolve("logger");
+  const env = container.resolve("env");
+  env.potUsed += num;
+  logger.debug("Pot used:", env.potUsed);
+});
+module.exports = factory;
