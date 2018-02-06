@@ -46,17 +46,20 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
       }
     };
 
-    const runScript = () => {
+    const checkBattle = () => {
       return process([
-        RunScript(scriptPath),
+        Location(),
+        checkAttackButton
       ]);
     };
 
     const checkNextButton = CheckNextButton(() => {
       return process([
-        runScript,
-        Location(),
-        checkAttackButton
+        RunScript(scriptPath),
+        (_, attack) => {
+          if (attack === false) return false;
+          return checkBattle();
+        }
       ]);
     }, (inBattle) => {
       if (inBattle) {
