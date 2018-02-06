@@ -16,13 +16,6 @@ export default function(extension) {
   this.on("worker.start", onStart(extension));
   this.on("worker.stop", onStop(extension));
 
-  /*
-  // consider making a switch for sequence debugging
-  this.on("worker.afterSequence", ({context, sequence, result}) => {
-    context.logger.debug(sequence.name, result);
-  });
-  */
-
   const subscription = this.getObservable("socket.broadcast")
     .filter(({name}) => name == "userId")
     .subscribe(({payload}) => {
