@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "canonical-path": "0.0.2",
-    "fengari": "github:fengari-lua/fengari#1ca95d75d13366f1094a906e58bc72b1c83374d4",
-    "fengari-interop": "github:fengari-lua/fengari-interop#db9c91bcb991e0b75266e49a765b17b62433715c",
+    "fengari": "github:fengari-lua/fengari",
+    "fengari-interop": "github:fengari-lua/fengari-interop",
     "lodash": "^4.17.4"
   }
 }
