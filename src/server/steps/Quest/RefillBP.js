@@ -11,6 +11,6 @@ factory.on("afterRefill", (container, itemId, num) => {
   const logger = container.resolve("logger");
   const env = container.resolve("env");
   env.berryUsed += num;
-  logger.debug("Berry used:", env.potUsed);
+  logger.debug("Berry used:", env.berryUsed);
 });
 module.exports = factory;
