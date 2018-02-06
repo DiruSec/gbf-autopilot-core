@@ -4,7 +4,7 @@ import Step from "../Step";
 
 exports = module.exports = (env, require, run, config, logger) => (location) => {
   const CheckAP = require("steps/Quest/CheckAP");
-  const CheckItem = require("steps/Quest/CheckItem");
+  const CheckTreasure = require("steps/Quest/CheckTreasure");
   const Location = require("steps/Location");
   const Ajax = require("steps/Ajax");
   const Stop = require("steps/Stop");
@@ -23,20 +23,10 @@ exports = module.exports = (env, require, run, config, logger) => (location) => 
     dataType: "json"
   };
   return Step("Quest", async function OpenPage() {
-    const treasure = env.treasure || config.General.Treasure;
-    const treasureTarget = env.treasureTarget || Number(config.General.TreasureTarget);
-    if (treasure && treasureTarget > 0) {
-      const options = {};
-      if (!isNaN(treasure)) {
-        options.id = Number(treasure);
-      } else {
-        options.name = treasure;
-      }
-      const treasureCount = await run(CheckItem(options));
-      if (treasureCount >= treasureTarget) {
-        logger.info("Treasure target reached. Stopping...");
-        return await run(Stop());
-      }
+    const hasReachedTarget = await run(CheckTreasure());
+    if (hasReachedTarget) {
+      logger.info("Treasure target reached. Stopping...");
+      return await run(Stop());
     }
 
     await run(CheckAP(url));
