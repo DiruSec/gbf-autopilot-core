@@ -7,11 +7,13 @@ exports = module.exports = (require, logger, process, config, coreConfig, run) =
   const WaitForResult = require("steps/Combat/WaitForResult");
   const Timeout = require("steps/Timeout");
   const Key = require("steps/Key");
+  
+  const summonTimeout = config.get("Combat.MinWaitTimeInMsAfterSummon"));
 
   return Step("Combat", function Summon(_, $, done, fail) {
     const doSummon = () => {
       run(WaitForResult()).then(() => {
-        return run(Timeout(config.Combat.MinWaitTimeInMsAfterSummon));
+        return run(Timeout(summonTimeout))
       }).then(() => done(true), fail);
 
       process([

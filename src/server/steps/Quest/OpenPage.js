@@ -1,8 +1,8 @@
-import {URL} from "url";
-import {locationToString} from "~/helpers/LocationHelper";
+import { URL } from "url";
+import { locationToString } from "~/helpers/LocationHelper";
 import Step from "../Step";
 
-exports = module.exports = (env, require, run, config, logger) => (location) => {
+exports = module.exports = (env, require, run, logger) => location => {
   const CheckAP = require("steps/Quest/CheckAP");
   const CheckTreasure = require("steps/Quest/CheckTreasure");
   const Location = require("steps/Location");
@@ -35,4 +35,4 @@ exports = module.exports = (env, require, run, config, logger) => (location) => 
   });
 };
 
-exports["@require"] = ["env", "require", "run", "config", "logger"];
+exports["@require"] = ["env", "require", "run", "logger"];

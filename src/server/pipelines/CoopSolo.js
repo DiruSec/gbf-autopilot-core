@@ -1,4 +1,11 @@
-exports = module.exports = (env, require, run, process, logger, config) => () => {
+exports = module.exports = (
+  env,
+  require,
+  run,
+  process,
+  logger,
+  config
+) => () => {
   const Wait = require("steps/Wait");
   const Check = require("steps/Check");
   const Click = require("steps/Click");
@@ -9,7 +16,7 @@ exports = module.exports = (env, require, run, process, logger, config) => () =>
 
   const saveCoopRoomUrl = async () => {
     const location = await run(Location());
-    return env.coopRoomUrl = location.href;
+    return (env.coopRoomUrl = location.href);
   };
 
   const checkStartButton = async () => {
@@ -23,11 +30,15 @@ exports = module.exports = (env, require, run, process, logger, config) => () =>
   };
 
   const checkAP = async () => {
-    const attrs = await run(Element.Attributes(".btn-quest-start", ["data-quest-id", "data-type"]));
-    await run(CheckAP({
-      questId: attrs["data-quest-id"],
-      type: attrs["data-type"]
-    }));
+    const attrs = await run(
+      Element.Attributes(".btn-quest-start", ["data-quest-id", "data-type"])
+    );
+    await run(
+      CheckAP({
+        questId: attrs["data-quest-id"],
+        type: attrs["data-type"]
+      })
+    );
     return true;
   };
 
@@ -41,13 +52,13 @@ exports = module.exports = (env, require, run, process, logger, config) => () =>
     checkStartButton,
     checkAP,
     clickStartButton,
-    Battle.Loop(config.CoopSoloMode.LuaScript),
+    Battle.Loop(config.get("CoopSoloMode.LuaScript")),
     () => run(Location.Change(env.coopRoomUrl)), // need to do this since the url may not have been set yet
     () => process(steps)
   ];
   return steps;
 };
 
-exports.test = (config) => config.CoopSoloMode.Enabled;
+exports.test = config => config.get("CoopSoloMode.Enabled");
 exports["@require"] = ["env", "require", "run", "process", "logger", "config"];
 exports["@name"] = "Coop Solo";

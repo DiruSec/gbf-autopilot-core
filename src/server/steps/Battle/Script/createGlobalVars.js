@@ -1,12 +1,21 @@
 import assign from "lodash/assign";
 
 // TODO: make the wrap function reusable (eg: making helper library for Lua)
-const wrap = (func) => function(...args) {
-  args.unshift(this.valueOf());
-  return func.apply(func, args);
-};
+const wrap = func =>
+  function(...args) {
+    args.unshift(this.valueOf());
+    return func.apply(func, args);
+  };
 
-exports = module.exports = (env, server, logger, context, config, require) => (state, extras) => {
+exports = module.exports = (
+  env,
+  server,
+  logger,
+  context,
+  config,
+  scenarioConfig,
+  require
+) => (state, extras) => {
   const Battle = require("steps/Battle");
   const Combat = require("steps/Combat");
   const Timeout = require("steps/Timeout");
@@ -20,22 +29,35 @@ exports = module.exports = (env, server, logger, context, config, require) => (s
 
     _running: true,
     _state: state,
-    _context: context, 
-    _config: config,
+    _context: context,
+    _config: config.toObject(),
+    _scenarioConfig: scenarioConfig.toObject(),
     logger: logger,
     script: {
       dir: extras.scriptDir,
       path: extras.scriptPath,
-      done: extras.done, 
+      done: extras.done,
       fail: extras.fail
     },
     steps: {
-      Battle, Combat, Timeout, Stop,
-      Location, Wait
+      Battle,
+      Combat,
+      Timeout,
+      Stop,
+      Location,
+      Wait
     },
 
-    error_handler: wrap(::server.defaultErrorHandler),
+    error_handler: wrap(::server.defaultErrorHandler)
   });
 };
 
-exports["@require"] = ["env", "server", "logger", "context", "config", "require"];
+exports["@require"] = [
+  "env",
+  "server",
+  "logger",
+  "context",
+  "config",
+  "scenarioConfig",
+  "require"
+];

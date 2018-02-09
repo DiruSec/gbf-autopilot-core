@@ -22,6 +22,7 @@ exports = module.exports = (logger, process, require) => () => {
   return steps;
 };
 
-exports.test = config => config.Debug.TrialBattleMode;
+exports.test = (config, scenarioConfig) =>
+  scenarioConfig.get("Mode") === "Trial" || config.get("Debug.TrialBattleMode");
 exports["@require"] = ["logger", "process", "require"];
 exports["@name"] = "Trial";

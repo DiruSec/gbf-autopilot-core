@@ -1,8 +1,11 @@
 import noop from "lodash/noop";
 import Step from "../../Step";
-import {isBattlePage, isResultPage} from "~/helpers/LocationHelper";
+import { isBattlePage, isResultPage } from "~/helpers/LocationHelper";
 
-exports = module.exports = (env, process, coreConfig, config, require, run) => (scriptPath, count) => {
+exports = module.exports = (env, process, coreConfig, config, require, run) => (
+  scriptPath,
+  count
+) => {
   const Wait = require("steps/Wait");
   const Check = require("steps/Check");
   const Click = require("steps/Click");
@@ -22,68 +25,83 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
     env.scriptVars = {};
   }
 
-  return Step("Battle.Loop", function() {
-    scriptPath = scriptPath || env.luaScript || config.Combat.LuaScript;
+  return Step(
+    "Battle.Loop",
+    function() {
+      scriptPath =
+        scriptPath || env.luaScript || config.get("Combat.LuaScript");
 
-    const useAuto = Boolean(env.useAuto || config.Combat.UseAuto);
+      const useAuto = Boolean(env.useAuto || config.get("Combat.UseAuto"));
 
-    const clickResultScreen = () => process([
-      Timeout(coreConfig.redirectDelay),
-      Wait(".cnt-result"),
-      Click(".btn-usual-ok"),
-      Timeout(coreConfig.redirectDelay)
-    ]).then(() => false);
+      const clickResultScreen = () =>
+        process([
+          Timeout(coreConfig.redirectDelay),
+          Wait(".cnt-result"),
+          Click(".btn-usual-ok"),
+          Timeout(coreConfig.redirectDelay)
+        ]).then(() => false);
 
-    const checkAttackButton = (_, location) => {
-      if (isResultPage(location)) {
-        return clickResultScreen();
-      } else if (isBattlePage(location)) {
-        return run(Check(".btn-attack-start.display-on")).then(() => {
-          return run(Combat.Attack(useAuto));
-        }, noop).then(() => true);
-      } else {
-        return false;
-      }
-    };
+      const checkAttackButton = (_, location) => {
+        if (isResultPage(location)) {
+          return clickResultScreen();
+        } else if (isBattlePage(location)) {
+          return run(Check(".btn-attack-start.display-on"))
+            .then(() => {
+              return run(Combat.Attack(useAuto));
+            }, noop)
+            .then(() => true);
+        } else {
+          return false;
+        }
+      };
 
-    const checkBattle = () => {
+      const checkBattle = () => {
+        return process([Location(), checkAttackButton]);
+      };
+
+      const checkNextButton = CheckNextButton(
+        () => {
+          return process([
+            RunScript(scriptPath),
+            (_, attack) => {
+              if (attack === false) return false;
+              return checkBattle();
+            }
+          ]);
+        },
+        inBattle => {
+          if (inBattle) {
+            return run(Timeout(coreConfig.redirectDelay)).then(() => true);
+          } else {
+            return clickResultScreen();
+          }
+        }
+      );
+
+      const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => {
+        return run(Combat.Retreat()).then(() => false);
+      });
+
       return process([
         Location(),
-        checkAttackButton
-      ]);
-    };
-
-    const checkNextButton = CheckNextButton(() => {
-      return process([
-        RunScript(scriptPath),
-        (_, attack) => {
-          if (attack === false) return false;
-          return checkBattle();
+        CheckLocation(checkDimensionalHalo),
+        function runSteps(context, inBattle) {
+          if (!inBattle) return false;
+          return run(Loop(scriptPath, ++count));
         }
       ]);
-    }, (inBattle) => {
-      if (inBattle) {
-        return run(Timeout(coreConfig.redirectDelay)).then(() => true);
-      } else {
-        return clickResultScreen();
-      }
-    });
-
-    const checkDimensionalHalo = CheckDimensionalHalo(checkNextButton, () => {
-      return run(Combat.Retreat()).then(() => false);
-    });
-
-    return process([
-      Location(),
-      CheckLocation(checkDimensionalHalo),
-      function runSteps(context, inBattle) {
-        if (!inBattle) return false;
-        return run(Loop(scriptPath, ++count));
-      }
-    ]);
-  }, {
-    doNotTimeout: true
-  });
+    },
+    {
+      doNotTimeout: true
+    }
+  );
 };
 
-exports["@require"] = ["env", "process", "coreConfig", "config", "require", "run"];
+exports["@require"] = [
+  "env",
+  "process",
+  "coreConfig",
+  "config",
+  "require",
+  "run"
+];

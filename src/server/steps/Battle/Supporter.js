@@ -1,18 +1,49 @@
 import Step from "../Step";
 
-exports = module.exports = (env, process, coreConfig, config, require) => (options) => {
+exports = module.exports = (
+  env,
+  process,
+  scenarioConfig,
+  coreConfig,
+  config,
+  require
+) => options => {
   options = options || {};
 
   const Wait = require("steps/Wait");
   const Timeout = require("steps/Timeout");
   const Support = require("steps/Support");
   return Step("Battle", async function Supporter() {
-    const summonAttribute = options.summonAttribute || env.summonAttribute || config.Summons.DefaultSummonAttributeTab;
-    const summonPreferred = options.summonPreferred || env.summonPreferred || config.Summons.PreferredSummons;
-    const summonReroll = options.summonReroll || env.summonReroll || Boolean(config.Summons.RerollSummonWhenNoPreferredSummonWasFound);
-    const partyGroup = options.partyGroup || env.partyGroup || Number(config.PartySelection.PreferredPartyGroup);
-    const partyDeck = options.partyDeck || env.partyDeck || Number(config.PartySelection.PreferredPartyDeck);
-    const partySet = options.partySet || env.partySet || config.PartySelection.PreferredPartySet;
+    const summonAttribute =
+      options.summonAttribute ||
+      env.summonAttribute ||
+      scenarioConfig.get("Summon.Attribute") ||
+      config.get("Summons.DefaultSummonAttributeTab");
+    const summonPreferred =
+      options.summonPreferred ||
+      env.summonPreferred ||
+      scenarioConfig.get("Summon.Preferred") ||
+      config.get("Summons.PreferredSummons");
+    const summonReroll =
+      options.summonReroll ||
+      env.summonReroll ||
+      scenarioConfig.get("Summon.Reroll") ||
+      Boolean(config.get("Summons.RerollSummonWhenNoPreferredSummonWasFound"));
+    const partyGroup =
+      options.partyGroup ||
+      env.partyGroup ||
+      scenarioConfig.get("Party.Group") ||
+      Number(config.get("PartySelection.PreferredPartyGroup"));
+    const partyDeck =
+      options.partyDeck ||
+      env.partyDeck ||
+      scenarioConfig.get("Party.Deck") ||
+      Number(config.get("PartySelection.PreferredPartyDeck"));
+    const partySet =
+      options.partySet ||
+      env.partySet ||
+      scenarioConfig.get("Party.Set") ||
+      config.get("PartySelection.PreferredPartySet");
 
     return await process([
       Wait(".atx-lead-link"),
@@ -26,10 +57,16 @@ exports = module.exports = (env, process, coreConfig, config, require) => (optio
       Support.SelectPartyGroup(partyGroup),
       Timeout(coreConfig.popupDelay),
       Support.SelectPartyDeck(partyDeck),
-      Support.StartBattle(),
+      Support.StartBattle()
     ]);
   });
 };
 
-exports["@require"] = ["env", "process", "coreConfig", "config", "require"];
-
+exports["@require"] = [
+  "env",
+  "process",
+  "scenarioConfig",
+  "coreConfig",
+  "config",
+  "require"
+];

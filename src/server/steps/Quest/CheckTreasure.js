@@ -1,11 +1,23 @@
 import Step from "../Step";
 
-exports = module.exports = (env, require, run, config) => (treasure, target) => {
+exports = module.exports = (env, require, run, config, scenarioConfig) => (
+  treasure,
+  target
+) => {
   const CheckItem = require("steps/Quest/CheckItem");
 
   return Step("Quest", async function CheckTreasure() {
-    treasure = treasure || env.treasure || config.General.Treasure;
-    target = target || env.treasureTarget || Number(config.General.TreasureTarget);
+    treasure =
+      treasure ||
+      env.treasure ||
+      scenarioConfig.get("Treasure.Track") ||
+      config.get("General.Treasure");
+    target =
+      target ||
+      env.treasureTarget ||
+      scenarioConfig.get("Treasure.Amount") ||
+      scenarioConfig.get("Treasure.Target") ||
+      Number(config.get("General.TreasureTarget"));
     if (!treasure || !target) {
       return false;
     }
@@ -21,4 +33,4 @@ exports = module.exports = (env, require, run, config) => (treasure, target) => 
   });
 };
 
-exports["@require"] = ["env", "require", "run", "config"];
+exports["@require"] = ["env", "require", "run", "config", "scenarioConfig"];

@@ -1,8 +1,12 @@
 import isString from "lodash/isString";
 import Step2 from "../Step2";
 
-exports = module.exports = (logger, config, require, process, run) => (selector, condition, delay) => {
-  delay = delay || config.reclickDelay;
+exports = module.exports = (logger, coreConfig, require, process, run) => (
+  selector,
+  condition,
+  delay
+) => {
+  delay = delay || coreConfig.reclickDelay;
   const Click = require("steps/Click");
   const Timeout = require("steps/Timeout");
   const Element = require("steps/Element");
@@ -13,22 +17,23 @@ exports = module.exports = (logger, config, require, process, run) => (selector,
     condition = () => run(Element.Condition(selector, conditionSelector));
   }
 
-  const wrapper = () => new Promise((resolve, reject) => {
-    const result = condition();
-    if (result instanceof Promise) {
-      return result.then(resolve, reject);
-    } else if (result instanceof Error || !result) {
-      return reject(result);
-    } else {
-      return resolve(result);
-    }
-  });
+  const wrapper = () =>
+    new Promise((resolve, reject) => {
+      const result = condition();
+      if (result instanceof Promise) {
+        return result.then(resolve, reject);
+      } else if (result instanceof Error || !result) {
+        return reject(result);
+      } else {
+        return resolve(result);
+      }
+    });
 
   const doClick = (done, fail) => {
-    return process([
-      Click(selector),
-      Timeout(delay),
-    ]).then(() => startClick(done, fail), fail);
+    return process([Click(selector), Timeout(delay)]).then(
+      () => startClick(done, fail),
+      fail
+    );
   };
 
   const startClick = (done, fail) => {

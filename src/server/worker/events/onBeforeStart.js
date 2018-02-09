@@ -31,7 +31,8 @@ export default function(extension) {
                 "' must implement a test function!"
             );
           },
-        "config"
+        "config",
+        "scenarioConfig"
       );
 
       if (passed || context.config.General.Mode === name) {
