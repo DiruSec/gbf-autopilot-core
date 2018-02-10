@@ -12,9 +12,9 @@ exports = module.exports = (
   const DefaultPipeline = require("pipelines/Default");
 
   const questUrl =
-    scenarioConfig.get("Quest.Url") || config.EventMode.EventRaidUrl;
+    scenarioConfig.get("Quest.Url") || config.get("EventMode.EventRaidUrl");
   const eventPageUrl =
-    scenarioConfig.get("Event.Url") || config.EventMode.EventPageUrl;
+    scenarioConfig.get("Event.Url") || config.get("EventMode.EventPageUrl");
   const nightmareQuestUrl =
     scenarioConfig.get("Nightmare.Quest.Url") ||
     config.get("EventMode.NightmareModeUrl");

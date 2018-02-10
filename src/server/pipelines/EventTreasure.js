@@ -14,38 +14,41 @@ exports = module.exports = (
   const CheckItem = require("steps/Quest/CheckItem");
   const DefaultPipeline = require("pipelines/Default");
 
-  const raidUrlSet = !!config.EventTreasureMode.EventTreasureRaidUrl;
+  const raidUrlSet = !!config.get("EventTreasureMode.EventTreasureRaidUrl");
   const treasureRequired = coreConfig.treasureRequired;
-  const url = new URL(config.EventTreasureMode.EventTreasureRaidUrl);
+  const url = new URL(config.get("EventTreasureMode.EventTreasureRaidUrl"));
   const parts = url.hash.split("/");
   const itemId = parts[parts.length - 1];
 
   const treasureSoloMode = () => {
-    env.questUrl = config.EventTreasureMode.EventTreasureSoloUrl;
-    env.luaScript = config.EventTreasureMode.EventTreasureSoloModeScript;
+    env.questUrl = config.get("EventTreasureMode.EventTreasureSoloUrl");
+    env.luaScript = config.get("EventTreasureMode.EventTreasureSoloModeScript");
   };
 
   const treasureRaidMode = () => {
-    env.questUrl = config.EventTreasureMode.EventTreasureRaidUrl;
-    env.luaScript = config.EventTreasureMode.EventTreasureRaidModeScript;
+    env.questUrl = config.get("EventTreasureMode.EventTreasureRaidUrl");
+    env.luaScript = config.get("EventTreasureMode.EventTreasureRaidModeScript");
   };
 
   const nightmareMode = () => {
-    env.questUrl = config.EventTreasureMode.NightmareModeUrl;
-    env.luaScript = config.EventTreasureMode.NightmareModeScript;
-    env.summonPreferred =
-      config.EventTreasureMode.NightmareModePreferredSummons;
-    env.summonAttribute =
-      config.EventTreasureMode.NightmareModeSummonAttributeTab;
-    env.summonReroll =
-      config.EventTreasureMode.RerollSummonWhenNoPreferredSummonWasFoundForNightmareMode;
+    env.questUrl = config.get("EventTreasureMode.NightmareModeUrl");
+    env.luaScript = config.get("EventTreasureMode.NightmareModeScript");
+    env.summonPreferred = config.get(
+      "EventTreasureMode.NightmareModePreferredSummons"
+    );
+    env.summonAttribute = config.get(
+      "EventTreasureMode.NightmareModeSummonAttributeTab"
+    );
+    env.summonReroll = config.get(
+      "EventTreasureMode.RerollSummonWhenNoPreferredSummonWasFoundForNightmareMode"
+    );
     env.partyGroup = Number(
-      config.PartySelection.PreferredNightmareModePartyGroup
+      config.get("PartySelection.PreferredNightmareModePartyGroup")
     );
     env.partyDeck = Number(
-      config.PartySelection.PreferredNightmareModePartyDeck
+      config.get("PartySelection.PreferredNightmareModePartyDeck")
     );
-    env.partySet = config.PartySelection.PreferredNightmareModePartySet;
+    env.partySet = config.get("PartySelection.PreferredNightmareModePartySet");
   };
 
   const checkTreasure = (count, isNightmare) => {
@@ -76,7 +79,7 @@ exports = module.exports = (
   const checkQuest = () => process([CheckItem(itemId), checkNightmare]);
 
   const steps = [
-    Location.Change(config.EventTreasureMode.EventTreasureUrl),
+    Location.Change(config.get("EventTreasureMode.EventTreasureUrl")),
     Wait(".atx-lead-link"),
     checkQuest,
     () => process(DefaultPipeline()),
