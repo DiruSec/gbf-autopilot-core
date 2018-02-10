@@ -43,7 +43,8 @@ exports = module.exports = (
       options.partySet ||
       env.partySet ||
       scenarioConfig.get("Party.Set") ||
-      config.get("PartySelection.PreferredPartySet");
+      config.get("PartySelection.PreferredPartySet") ||
+      "A";
 
     return await process([
       Wait(".atx-lead-link"),

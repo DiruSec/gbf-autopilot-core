@@ -35,7 +35,7 @@ export default function(extension) {
         "scenarioConfig"
       );
 
-      if (passed || context.config.General.Mode === name) {
+      if (passed) {
         context.logger.info("Using '" + name + "' mode.");
         selectedPipeline = container.inject(pipeline);
         return false;
