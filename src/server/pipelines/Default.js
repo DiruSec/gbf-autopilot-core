@@ -1,9 +1,21 @@
-import {isSupporterPage, isBattlePage, locationToString, pageRegexp} from "~/helpers/LocationHelper";
+import {
+  isSupporterPage,
+  isBattlePage,
+  locationToString,
+  pageRegexp
+} from "~/helpers/LocationHelper";
 
-exports = module.exports = (env, logger, process, require) => () => {
+exports = module.exports = (
+  env,
+  logger,
+  exec,
+  require,
+  scenarioConfig
+) => () => {
   if (!env.questCount) {
     env.questCount = 0;
   }
+  env.questUrl = env.questUrl || scenarioConfig.get("Quest.Url");
 
   const OpenPage = require("steps/Quest/OpenPage");
   const Location = require("steps/Location");
@@ -33,15 +45,15 @@ exports = module.exports = (env, logger, process, require) => () => {
 
       pipeline.push(() => {
         if (!env.questMax || env.questCount < env.questMax) {
-          return process(steps);
+          return exec(steps);
         }
         return true;
       });
-      return process(pipeline);
+      return exec(pipeline);
     }
   ];
   return steps;
 };
 
-exports["@require"] = ["env", "logger", "process", "require"];
+exports["@require"] = ["env", "logger", "process", "require", "scenarioConfig"];
 exports["@name"] = "Default";
