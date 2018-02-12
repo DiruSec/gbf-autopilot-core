@@ -52,7 +52,6 @@ exports = module.exports = (
       Timeout(coreConfig.scrollDelay),
       Support.SelectSummon(summonPreferred, summonReroll),
 
-      Wait(".pop-deck.supporter,.pop-deck.supporter_raid"),
       Timeout(coreConfig.popupDelay),
       Support.SelectPartySet(partySet),
       Support.SelectPartyGroup(partyGroup),

@@ -1,3 +1,4 @@
+import noop from "lodash/noop";
 import isString from "lodash/isString";
 import Step from "../Step";
 
@@ -12,19 +13,27 @@ import Step from "../Step";
 //   f: "favorite"
 // };
 
-exports = module.exports = (env, context, coreConfig, require, run, process) => (summons, summonReroll) => {
+exports = module.exports = (
+  env,
+  context,
+  coreConfig,
+  require,
+  run,
+  process
+) => (summons, summonReroll) => {
   if (isString(summons)) {
-    summons = summons.split(",").map((summon) => summon.trim());
+    summons = summons.split(",").map(summon => summon.trim());
   }
-  
-  const {server, worker, logger} = context;
 
+  const { server, worker, logger } = context;
+
+  const Wait = require("steps/Wait");
   const Timeout = require("steps/Timeout");
   const Element = require("steps/Element");
   const Location = require("steps/Location");
   const SummonReroll = require("steps/Support/SummonReroll");
 
-  const checkSummonReroll = async (payload) => {
+  const checkSummonReroll = async payload => {
     if (payload.preferred) return payload;
     logger.info("Preferred summons not found. Refreshing summons.");
     const selector = "#prt-type > .btn-type:not(.unselected)";
@@ -38,23 +47,52 @@ exports = module.exports = (env, context, coreConfig, require, run, process) => 
 
   return Step("Support", function SelectSummon() {
     logger.debug("Preferred summons:", summons);
-    return worker.sendAction("support", summons).then((payload) => {
-      const next = (payload) => {
-        logger.info("Selected summon:", payload.summon);
-        return run(Timeout(coreConfig.scrollDelay), payload);
-      };
+    return worker
+      .sendAction("support", summons)
+      .then(payload => {
+        const next = payload => {
+          logger.info("Selected summon:", payload.summon);
+          return run(Timeout(coreConfig.scrollDelay), payload);
+        };
 
-      if (summonReroll) {
-        return checkSummonReroll(payload).then(() => {
-          return worker.sendAction("support", summons);
-        }).then(next);
-      } else {
-        return next(payload);
-      }
-    }).then((payload) => {
-      return server.makeRequest("click", payload);
-    });
+        if (summonReroll) {
+          return checkSummonReroll(payload)
+            .then(() => {
+              return worker.sendAction("support", summons);
+            })
+            .then(next);
+        } else {
+          return next(payload);
+        }
+      })
+      .then(
+        payload =>
+          new Promise((resolve, reject) => {
+            let popupShown = false;
+            const selector = ".pop-deck.supporter,.pop-deck.supporter_raid";
+            run(Wait(selector)).then(() => {
+              resolve((popupShown = true));
+            }, reject);
+
+            const doClick = (done, fail) => {
+              if (popupShown) return done(true);
+              return server.makeRequest("click", payload).then(() => {
+                return run(Timeout(coreConfig.popupDelay)).then(() =>
+                  doClick(done, fail)
+                );
+              }, fail);
+            };
+            doClick(resolve, reject);
+          })
+      );
   });
 };
 
-exports["@require"] = ["env", "context", "coreConfig", "require", "run", "process"];
+exports["@require"] = [
+  "env",
+  "context",
+  "coreConfig",
+  "require",
+  "run",
+  "process"
+];
