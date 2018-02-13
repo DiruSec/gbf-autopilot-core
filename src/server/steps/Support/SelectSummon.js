@@ -65,26 +65,25 @@ exports = module.exports = (
           return next(payload);
         }
       })
-      .then(
-        payload =>
-          new Promise((resolve, reject) => {
-            let popupShown = false;
-            const selector = ".pop-deck.supporter,.pop-deck.supporter_raid";
-            run(Wait(selector)).then(() => {
-              resolve((popupShown = true));
-            }, reject);
+      .then(payload => {
+        return new Promise((resolve, reject) => {
+          var popupShown = false;
+          const selector = ".pop-deck.supporter,.pop-deck.supporter_raid";
+          run(Wait(selector)).then(() => {
+            resolve((popupShown = true));
+          }, reject);
 
-            const doClick = (done, fail) => {
-              if (popupShown) return done(true);
-              return server.makeRequest("click", payload).then(() => {
-                return run(Timeout(coreConfig.popupDelay)).then(() =>
-                  doClick(done, fail)
-                );
-              }, fail);
-            };
-            doClick(resolve, reject);
-          })
-      );
+          const doClick = (done, fail) => {
+            if (popupShown) return done(true);
+            return server.makeRequest("click", payload).then(() => {
+              return run(Timeout(coreConfig.popupDelay + 3500)).then(() =>
+                doClick(done, fail)
+              );
+            }, fail);
+          };
+          doClick(noop, reject);
+        });
+      });
   });
 };
 

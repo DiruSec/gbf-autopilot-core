@@ -1,6 +1,6 @@
 import noop from "lodash/noop";
 import Step from "../Step";
-import {isBattlePage} from "~/helpers/LocationHelper";
+import { isBattlePage } from "~/helpers/LocationHelper";
 
 exports = module.exports = (logger, require, run) => () => {
   const Wait = require("steps/Wait");
@@ -10,40 +10,50 @@ exports = module.exports = (logger, require, run) => () => {
 
   const clickPopup = (done, fail) => {
     return run(Check(".pop-skip-result")).then(() => {
-      return run(Click.Condition(".btn-usual-ok")).then(() => {
-        return run(Wait(".btn-attack-start"));
-      }).then(done, fail);
+      return run(Click.Condition(".btn-usual-ok"))
+        .then(() => {
+          return run(Wait(".btn-attack-start"));
+        })
+        .then(done, fail);
     }, done);
   };
 
   const checkPopup = (done, fail) => {
-    return run(Wait(".btn-attack-start,.pop-skip-result")).then(() => {
-      return clickPopup(noop, fail);
-    }).then(() => done(true), fail);
+    return run(Wait(".btn-attack-start,.pop-skip-result"))
+      .then(() => {
+        return clickPopup(noop, fail);
+      })
+      .then(() => done(true), fail);
   };
 
   return Step("Support", function StartBattle(_, $, done, fail) {
     logger.debug("Starting battle...");
 
     var hasChanged = false;
-    run(Click.Condition(".btn-usual-ok", () => hasChanged)).then(noop, fail);
-    run(Location.Wait()).then(() => {
-      return run(Location());
-    }).then((location) => {
-      hasChanged = true;
-      if (location) {
-        if (isBattlePage(location)) {
-          return done(true);
-        } else if (location.hash.startsWith("#quest/stage")) {
-          return checkPopup(done, fail);
+    const selector = [".pop-deck.supporter", ".pop-deck.supporter_raid"]
+      .map(selector => selector + " .btn-usual-ok")
+      .join(",");
+    run(Click.Condition(selector, () => hasChanged)).then(noop, fail);
+    run(Location.Wait())
+      .then(() => {
+        return run(Location());
+      })
+      .then(location => {
+        hasChanged = true;
+        if (location) {
+          if (isBattlePage(location)) {
+            return done(true);
+          } else if (location.hash.startsWith("#quest/stage")) {
+            return checkPopup(done, fail);
+          } else {
+            return fail(
+              new Error("Unexpected page redirection: '" + location.hash + "'")
+            );
+          }
         } else {
-          return fail(new Error("Unexpected page redirection: '" + location.hash + "'"));
+          return fail(new Error("Can't fetch the location"));
         }
-      } else {
-        return fail(new Error("Can't fetch the location"));
-      }
-    }, fail);
-
+      }, fail);
   });
 };
 
