@@ -2,10 +2,15 @@ import noop from "lodash/noop";
 import Step from "../../Step";
 import { isBattlePage, isResultPage } from "~/helpers/LocationHelper";
 
-exports = module.exports = (env, process, coreConfig, config, require, run) => (
-  scriptPath,
-  count
-) => {
+exports = module.exports = (
+  env,
+  process,
+  coreConfig,
+  scenarioConfig,
+  config,
+  require,
+  run
+) => (scriptPath, count) => {
   const Wait = require("steps/Wait");
   const Check = require("steps/Check");
   const Click = require("steps/Click");
@@ -29,7 +34,10 @@ exports = module.exports = (env, process, coreConfig, config, require, run) => (
     "Battle.Loop",
     function() {
       scriptPath =
-        scriptPath || env.luaScript || config.get("Combat.LuaScript");
+        scriptPath ||
+        env.luaScript ||
+        scenarioConfig.get("Lua.Script") ||
+        config.get("Combat.LuaScript");
 
       const useAuto = Boolean(env.useAuto || config.get("Combat.UseAuto"));
 
@@ -101,6 +109,7 @@ exports["@require"] = [
   "env",
   "process",
   "coreConfig",
+  "scenarioConfig",
   "config",
   "require",
   "run"
