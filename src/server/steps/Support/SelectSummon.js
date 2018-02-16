@@ -2,20 +2,10 @@ import noop from "lodash/noop";
 import isString from "lodash/isString";
 import Step from "../Step";
 
-// const elementMap = {
-//   1: "fire",
-//   2: "water",
-//   3: "earth",
-//   4: "wind",
-//   5: "light",
-//   6: "dark",
-//   7: "misc",
-//   f: "favorite"
-// };
-
 exports = module.exports = (
   env,
   context,
+  config,
   coreConfig,
   require,
   run,
@@ -33,6 +23,8 @@ exports = module.exports = (
   const Location = require("steps/Location");
   const SummonReroll = require("steps/Support/SummonReroll");
 
+  const supporterSelectors = require("selectors/SupporterPage");
+
   const checkSummonReroll = async payload => {
     if (payload.preferred) return payload;
     logger.info("Preferred summons not found. Refreshing summons.");
@@ -45,10 +37,31 @@ exports = module.exports = (
     return process(SummonReroll(summons, element, location));
   };
 
+  const verificationEnabled = config.get("Verification.SummonVerifyEnabled");
+  const verificationCount = Number(
+    config.get("Verification.SummonVerifyTriggeredWhenSelectionIsLessThan")
+  );
+
   return Step("Support", function SelectSummon() {
     logger.debug("Preferred summons:", summons);
     return worker
-      .sendAction("support", summons)
+      .sendAction("element.count", supporterSelectors.SUMMON_SELECTION)
+      .then(count => {
+        if (verificationEnabled) {
+          if (count < verificationCount) {
+            logger.error(
+              "WARNING:",
+              `Summon selection count is less than the defined ${verificationCount}.`,
+              "Stopping the bot due to possibility of the verification button."
+            );
+            throw new Error(
+              `Selection count is less than the defined ${verificationCount}. Stopping.`
+            );
+          }
+        }
+
+        return worker.sendAction("support", summons);
+      })
       .then(payload => {
         const next = payload => {
           logger.info("Selected summon:", payload.summon);
@@ -90,6 +103,7 @@ exports = module.exports = (
 exports["@require"] = [
   "env",
   "context",
+  "config",
   "coreConfig",
   "require",
   "run",

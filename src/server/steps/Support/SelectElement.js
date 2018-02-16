@@ -15,11 +15,24 @@ const elementMap = {
   favorite: "f"
 };
 
-exports = module.exports = (require, run) => (element) => {
+exports = module.exports = (require, run, config, logger) => element => {
   if (typeof element === "string" && element.length > 1) {
     element = element.toLowerCase();
     element = elementMap[element] || element.substring(0, 1);
   }
+
+  const summonVerifyEnabled = config.get("Verification.SummonVerifyEnabled");
+  if (summonVerifyEnabled && element === "f") {
+    logger.error(
+      "CAUTION:",
+      "Using favorite summon tab with 'SummonVerify' verification mode enabled is discouraged.",
+      "Bot stopped for safety."
+    );
+    throw new Error(
+      "'Favorite' summon tab with 'SummonVerify' verification mode enabled is not allowed."
+    );
+  }
+
   const Check = require("steps/Check");
   const Click = require("steps/Click");
   const elementSelector = elementPrefix + element;
@@ -30,4 +43,4 @@ exports = module.exports = (require, run) => (element) => {
   });
 };
 
-exports["@require"] = ["require", "run"];
+exports["@require"] = ["require", "run", "config", "logger"];
