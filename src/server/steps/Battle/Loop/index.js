@@ -44,8 +44,8 @@ exports = module.exports = (
       const clickResultScreen = () =>
         process([
           Timeout(coreConfig.redirectDelay),
-          Wait(".cnt-result"),
-          Click(".btn-usual-ok"),
+          Wait(".cnt-result,.btn-control"),
+          Click(".btn-usual-ok,.btn-control"),
           Timeout(coreConfig.redirectDelay)
         ]).then(() => false);
 
