@@ -30,9 +30,12 @@ exports = module.exports = (logger, require, run) => () => {
     logger.debug("Starting battle...");
 
     var hasChanged = false;
+    /*
     const selector = [".pop-deck.supporter", ".pop-deck.supporter_raid"]
       .map(selector => selector + " .btn-usual-ok")
       .join(",");
+    */
+    const selector = ".btn-usual-ok";
     run(Click.Condition(selector, () => hasChanged)).then(noop, fail);
     run(Location.Wait())
       .then(() => {

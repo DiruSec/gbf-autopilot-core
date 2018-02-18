@@ -14,8 +14,8 @@ exports = module.exports = (
   const Wait = require("steps/Wait");
   const Check = require("steps/Check");
   const Click = require("steps/Click");
-  const Timeout = require("steps/Timeout");
   const Combat = require("steps/Combat");
+  const Timeout = require("steps/Timeout");
   const Location = require("steps/Location");
 
   const Loop = require("steps/Battle/Loop");
