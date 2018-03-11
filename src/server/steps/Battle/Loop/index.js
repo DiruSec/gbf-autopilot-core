@@ -39,7 +39,11 @@ exports = module.exports = (
         scenarioConfig.get("Lua.Script") ||
         config.get("Combat.LuaScript");
 
-      const useAuto = Boolean(env.useAuto || config.get("Combat.UseAuto"));
+      const useAuto = Boolean(
+        env.useAuto ||
+          scenarioConfig.get("Combat.UseAuto") ||
+          config.get("Combat.UseAuto")
+      );
 
       const clickResultScreen = () =>
         process([
