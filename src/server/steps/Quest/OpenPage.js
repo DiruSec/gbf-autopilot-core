@@ -1,8 +1,13 @@
-import { URL } from "url";
-import { locationToString } from "~/helpers/LocationHelper";
+import {
+  URL
+} from "url";
+import {
+  locationToString
+} from "~/helpers/LocationHelper";
 import Step from "../Step";
 
 exports = module.exports = (env, require, run, logger) => location => {
+  const CheckAttempt = require("steps/Quest/CheckAttempt");
   const CheckAP = require("steps/Quest/CheckAP");
   const CheckTreasure = require("steps/Quest/CheckTreasure");
   const Location = require("steps/Location");
@@ -29,6 +34,7 @@ exports = module.exports = (env, require, run, logger) => location => {
       return await run(Stop());
     }
 
+    await run(CheckAttempt(url));
     await run(CheckAP(url));
     await run(Ajax(ajaxOptions));
     return await run(Location.Change(url.toString()));

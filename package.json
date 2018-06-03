@@ -2,7 +2,7 @@
   "name": "gbf-autopilot-core",
   "version": "0.0.1",
   "description": "Core extension for GBF Autopilot",
-  "repository": "github:Frizz925/gbf-autopilot-core",
+  "repository": "github:DiruSec/gbf-autopilot-core",
   "main": "build/index.js",
   "scripts": {
     "install": "gulp build",
